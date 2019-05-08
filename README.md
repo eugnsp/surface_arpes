@@ -1,2 +1,3 @@
-# surface_arpes
+# ARPES
+
 Calculator of ARPES spectra for depletion/accumulation surface layers
