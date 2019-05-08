@@ -1,0 +1,12 @@
+[submodule "external/es_fe"]
+	path = external/es_fe
+	url = https://github.com/eugnsp/es_fe.git
+[submodule "external/es_la"]
+	path = external/es_la
+	url = https://github.com/eugnsp/es_la.git
+[submodule "external/es_util"]
+	path = external/es_util
+	url = https://github.com/eugnsp/es_util.git
+[submodule "external/--force"]
+	path = external/--force
+	url = https://github.com/eugnsp/es_fe.git

@@ -1,0 +1,213 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+
+\newcommand{\dd}{\mathrm{d}}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\ve}{\vec{e}}
+\newcommand{\vi}{\vec{i}}
+\newcommand{\vn}{\vec{n}}
+\newcommand{\vx}{\vec{x}}
+\newcommand{\fFD}{f_{\mathrm{FD}}}
+\newcommand{\fL}{f_{\mathrm{L}}}
+\newcommand{\fG}{f_{\mathrm{G}}}
+
+\begin{document}
+
+\title{ARPES signal calculation in a slab with a depletion/accumulation
+surface layer (quasi-1D model)}
+\maketitle
+
+\section{Quasi-classical problem}
+
+\subsection{Poisson equation}
+
+To find the potential profile~$\phi(z)$, we solve the 1D Poisson equation:
+\begin{equation}
+	\label{eq:poisson}
+	- \frac{\dd}{\dd z} \left[ \epsilon \frac{\dd\phi(z)}{\dd z} \right]
+	= 4\pi [N_D - n(z)],
+\end{equation}
+where $N_D$ is the (spatially uniform) density of ionized donors, and $n(z)$ is the
+electron density. It is given by
+\begin{equation}
+	\label{eq:c_density}
+	n(z) = N_c^\mathrm{3D} \fFD^{1/2} \left[ -\frac{E_c(z) - F}{T} \right]
+	     = N_c^\mathrm{3D} \fFD^{1/2} \left[ -\frac{E_{c0} - \phi(z) - F}{T} \right]
+\end{equation}
+where $N_c$ is the effective 3D density of states, $\fFD^{\alpha}$ is the Fermi--Dirac
+integral of order~$\alpha$,
+\begin{equation}
+	\fFD^{\alpha}(x) =
+	\frac{1}{\Gamma(\alpha + 1)} \int_0^\infty dt\, \frac{t^\alpha}{1 + \exp(t - x)},
+\end{equation}
+$F$ is the Fermi level, $E_{c0}$ if the conduction band minimum,
+and $T$ is the lattice temperature.
+
+The effective 3D density of states is given by
+\begin{equation}
+	N_c^\mathrm{3D} = 2 \left( \frac{m T}{2\pi} \right)^{3/2},
+\end{equation}
+where $m$ is the electron effective mass.
+
+The zero level of energy is chosen such that $E_{c0} = 0$. Then the arbitrary additive
+constant in the potential~$\phi(x)$ is chosen such that $\phi(x) = 0$ corresponds to
+charge neutrality:
+\begin{equation}
+	N_D = N_c^\mathrm{3D} \fFD^{1/2} \left( \frac{F}{T} \right),
+	\quad\text{or}\quad
+	F = T \{\fFD^{1/2}\}^{-1} \left( \frac{N_D}{N_c^\mathrm{3D}} \right).
+\end{equation}
+
+Finally:
+\begin{equation}
+	n(\phi) = N_c^\mathrm{3D} \fFD^{1/2} \left( \frac{\phi + F}{T} \right), \quad
+	\frac{\dd n}{\dd \phi} =
+		\frac{N_c^\mathrm{3D}}{T} \fFD^{-1/2} \left( \frac{\phi + F}{T} \right).
+\end{equation}
+
+The Poisson equation~\eqref{eq:poisson} is a non-linear equation. To solve it, we employ
+the Newton's method. Linearizing for $\phi(z) = \phi_0(z) + \delta\phi(z)$, we get:
+\begin{equation}
+	\label{eq:poisson_newton}
+	- \frac{\dd}{\dd z} \left[ \epsilon \frac{\dd \delta\phi(z)}{\dd z} \right]
+	+ 4\pi \frac{\dd n_0}{\dd \phi_0} \delta\phi(z)
+	= \frac{\dd}{\dd z} \left[ \epsilon \frac{\dd \phi_0(z)}{\dd z} \right]
+	+ 4\pi [N_D - n_0(z)],
+\end{equation}
+where $n_0(z) = n(\phi_0(z))$.
+
+\textbf{Boundary conditions.} The boundary conditions for eq.~\eqref{eq:poisson} are:
+\begin{equation}
+	\phi(0) = \phi_b, \quad \frac{\dd \phi(L)}{\dd z} = E(L) = 0,
+\end{equation}
+where $L$ is the system length, chosen such that $L \gg$ screening length. Corresponding
+boundary conditions for eq.~\eqref{eq:poisson_newton} are:
+\begin{equation}
+	\delta\phi(0) = 0, \quad \frac{\dd \delta\phi(L)}{\dd z} = 0.
+\end{equation}
+
+The initial guess for~$\phi_0(z)$ is obtained from local charge neutrality inside the
+system. Hence, we start Newton's iterations from $\phi_0(0) = \phi_b$, $\phi_0(z > 0) = 0$.
+
+\textbf{Finite elements discretization.} Galerkin's method is used for numerical solution
+of eq.~\eqref{eq:poisson_newton}. We multiply it by the test function~$\psi_i(z)$ and
+integrate by parts taking into account the boundary conditions:
+\begin{equation}
+	\int \frac{\dd \psi_i}{\dd z} \frac{\dd \delta\phi}{\dd z}
+	+ 4\pi \int \frac{\dd n_0}{\dd \phi_0} \psi_i \delta\phi
+	= - \int \epsilon \frac{\dd \psi_i}{\dd z} \frac{\dd \phi_0}{\dd z}
+	+ 4\pi \int [N_D - n_0] \psi_i.
+\end{equation}
+
+Expanding $\delta\phi(z)$ over $\psi_i(z)$, $\delta\phi(x) = \sum_j \delta\phi_j \psi_j(z)$,
+we obtain the matrix equation:
+\begin{equation}
+	\sum_j \left( S_{ij} - M_{ij} \right) \delta\phi_j = r_i
+\end{equation}
+with
+\begin{equation}
+\begin{split}
+	S_{ij} &= \int \epsilon \frac{\dd \psi_i}{\dd z} \frac{\dd \psi_j}{\dd z}, \quad
+	M_{ij} = -4\pi \int \frac{\dd n_0}{\dd \phi_0} \psi_i \psi_j, \\
+	r_i &= - \sum_j S_{ij} \phi_{0j} + 4\pi \int (N_D - n_0) \psi_i.
+\end{split}
+\end{equation}
+
+Integrals are calculated using Gauss quadratures $\{z_k, w_k\}$. In particular:
+\begin{equation}
+	\int n_0 \psi_i = \sum_k w_k n[\phi_0(z_k)] \psi_i(z_k)
+	= \sum_k w_k n\Big[ \sum_l \phi_{0l} \psi_l(z_k) \Big] \psi_i(z_k),
+\end{equation}
+and
+\begin{equation}
+	\int \frac{\dd n_0}{\dd \phi_0} \psi_i \psi_j
+	= \sum_k w_k \frac{\dd n}{\dd \phi}
+		\Big[ \sum_l \phi_{0l} \psi_l(z_k) \Big] \psi_i(z_k) \psi_j(z_k).
+\end{equation}
+
+\section{Quantum problem}
+
+To account for quantum effects, we solve the Schr\"odinger and the Poisson
+equations self-consistently. First, we solve the Schr\"odinger equation
+\begin{equation}
+	\label{eq:schrodinger}
+	\frac{1}{2m} \frac{\dd^2}{\dd z^2} \psi(z) + V(z) \psi(z) = E \psi(z),
+\end{equation}
+where $V(z) = -\phi(z)$, and then use the first-order perturbation theory to turn a
+linear Poisson equation into a non-linear one with the electron density given by
+\begin{equation}
+	n(\phi, z) = N_c^\mathrm{2D} \sum_n \lvert\psi_n^{(0)}(z)\rvert^2 \fFD^0
+				 \left[ \frac{\phi(z) - \phi^{(0)}(z) + F - E_n^{(0)}}{T} \right],
+\end{equation}
+where the effective 2D density of states is given by
+\begin{equation}
+	N_c^\mathrm{2D} = \frac{m T}{\pi}.
+\end{equation}
+and summation is performed over all eigenstates~$\{ \psi_n^{(0)}(z), E_n^{(0)} \}$
+that were obtained by solving \eqref{eq:schrodinger} with the potential
+$V(z) = -\phi_0^{(0)}(z)$. The derivative of $n(\phi, z)$ is
+\begin{equation}
+	\frac{\dd n}{\dd \phi} =
+		\frac{N_c^\mathrm{2D}}{T} \sum_n \lvert\psi_n^{(0)}(z)\rvert^2 \fFD^{-1}
+		\left[ \frac{\phi(z) - \phi^{(0)}(z) + F - E_n^{(0)}}{T} \right].
+\end{equation}
+
+The initial approximation for $\phi(z)$ is obtained from the solution of the
+quasi-classical problem \eqref{eq:poisson}--\eqref{eq:c_density}.
+
+The Fermi--Dirac integrals $\fFD^0(x)$ and $\fFD^{-1}(x)$ have closed forms:
+\begin{equation}
+	\fFD^0(x) = \ln[ 1 + \exp(x) ], \quad
+	\fFD^{-1}(x) = \frac{1}{1 + \exp(-x)} = f_{\mathrm{FD}}(-x),
+\end{equation}
+where $f_{\mathrm{FD}}(x)$ is the Fermi--Dirac distribution.
+
+\textbf{Boundary conditions.} The potential barriers at the system
+boundaries are assumed to be infinitely high, so we put
+\begin{equation}
+	\psi(z = 0) = \psi(z = L) = 0.
+\end{equation}
+
+\textbf{Finite elements discretization.} Here we also use the Galerkin's method.
+Eq.~\eqref{eq:schrodinger} reduces to a generalized eigenvalue problem:
+\begin{equation}
+	\sum_j \left( T_{ij} + V_{ij} \right) \psi_j = E_n B_{ij} \psi_j
+\end{equation}
+with
+\begin{equation}
+	T_{ij} = \frac{1}{2m }\int \frac{\dd \psi_i}{\dd z} \frac{\dd \psi_j}{\dd z}, \quad
+	V_{ij} = \int V \psi_i \psi_j, \quad B_{ij} = \int \psi_i \psi_j,
+\end{equation}
+where $B$ is positive-definite.
+
+\section{ARPES signal calculation}
+
+The single-particle density of a filled states at fixed depth~$z$ is given by
+the product
+\begin{eqnarray}
+	I(E, k_x, z) = f_{\mathrm{L}}\left[ E - \frac{k_x^2}{2m} + \phi(z) \right]
+				   f_{\mathrm{FD}}\left( \frac{E - F}{T} \right),
+\end{eqnarray}
+of the Lorentzian distribution $f_{\mathrm{L}}(E)$ with half width at half
+maximum $\delta_E$,
+\begin{eqnarray}
+	f_{\mathrm{L}}(E) = \frac{1}{\pi \delta_E}
+		\frac{1}{1 + \left( \dfrac{E}{\delta_E} \right)^2},
+\end{eqnarray}
+and
+
+The total ARPES signal is obtained by integration over~$z$. Assuming that the
+contribution of states at the depth~$z$ is proportional to $\exp(-z / \lambda)$,
+we obtain:
+\begin{equation}
+	I(E, k_x) \sim \int_0^\infty \dd z \exp\left( -\frac{z}{\lambda} \right)
+				f_{\mathrm{L}}\left[ E - \frac{k_x^2}{2m} + \phi(z) \right]
+				f_{\mathrm{FD}}\left( \frac{E - F}{T} \right).
+\end{equation}
+
+\end{document}
