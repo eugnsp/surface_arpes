@@ -10,17 +10,25 @@
 \renewcommand{\vec}[1]{\mathbf{#1}}
 \newcommand{\ve}{\vec{e}}
 \newcommand{\vi}{\vec{i}}
+\newcommand{\vk}{\vec{k}}
+\newcommand{\vK}{\vec{K}}
 \newcommand{\vn}{\vec{n}}
 \newcommand{\vx}{\vec{x}}
 \newcommand{\fFD}{f_{\mathrm{FD}}}
 \newcommand{\fL}{f_{\mathrm{L}}}
 \newcommand{\fG}{f_{\mathrm{G}}}
+\newcommand{\ii}{\mathrm{i}}
 
 \begin{document}
 
 \title{ARPES signal calculation in a slab with a depletion/accumulation
-surface layer (quasi-1D model)}
+surface layer (quasi-1D~model)}
+\author{https://github.com/eugnsp/surface\_arpes}
 \maketitle
+
+This document conains a succinct description of equations that are numerically solved
+in the code. No attempt has been made to present mathematically and/or physically
+rigorous derivations. Please see references for details.
 
 \section{Quasi-classical problem}
 
@@ -43,14 +51,14 @@ where $N_c$ is the effective 3D density of states, $\fFD^{\alpha}$ is the Fermi-
 integral of order~$\alpha$,
 \begin{equation}
 	\fFD^{\alpha}(x) =
-	\frac{1}{\Gamma(\alpha + 1)} \int_0^\infty dt\, \frac{t^\alpha}{1 + \exp(t - x)},
+	\frac{1}{\Gamma(\alpha + 1)} \int_0^\infty dt\, \frac{t^\alpha}{1 + e^{t - x}},
 \end{equation}
 $F$ is the Fermi level, $E_{c0}$ if the conduction band minimum,
 and $T$ is the lattice temperature.
 
 The effective 3D density of states is given by
 \begin{equation}
-	N_c^\mathrm{3D} = 2 \left( \frac{m T}{2\pi} \right)^{3/2},
+	N_c^\mathrm{3D} = 2 \left[ \frac{m T}{2\pi} \right]^{3/2},
 \end{equation}
 where $m$ is the electron effective mass.
 
@@ -58,16 +66,16 @@ The zero level of energy is chosen such that $E_{c0} = 0$. Then the arbitrary ad
 constant in the potential~$\phi(x)$ is chosen such that $\phi(x) = 0$ corresponds to
 charge neutrality:
 \begin{equation}
-	N_D = N_c^\mathrm{3D} \fFD^{1/2} \left( \frac{F}{T} \right),
+	N_D = N_c^\mathrm{3D} \fFD^{1/2} \left[ \frac{F}{T} \right],
 	\quad\text{or}\quad
-	F = T \{\fFD^{1/2}\}^{-1} \left( \frac{N_D}{N_c^\mathrm{3D}} \right).
+	F = T \{\fFD^{1/2}\}^{-1} \left[ \frac{N_D}{N_c^\mathrm{3D}} \right].
 \end{equation}
 
 Finally:
 \begin{equation}
-	n(\phi) = N_c^\mathrm{3D} \fFD^{1/2} \left( \frac{\phi + F}{T} \right), \quad
+	n(\phi) = N_c^\mathrm{3D} \fFD^{1/2} \left[ \frac{\phi + F}{T} \right], \quad
 	\frac{\dd n}{\dd \phi} =
-		\frac{N_c^\mathrm{3D}}{T} \fFD^{-1/2} \left( \frac{\phi + F}{T} \right).
+		\frac{N_c^\mathrm{3D}}{T} \fFD^{-1/2} \left[ \frac{\phi + F}{T} \right].
 \end{equation}
 
 The Poisson equation~\eqref{eq:poisson} is a non-linear equation. To solve it, we employ
@@ -101,7 +109,7 @@ integrate by parts taking into account the boundary conditions:
 	\int \frac{\dd \psi_i}{\dd z} \frac{\dd \delta\phi}{\dd z}
 	+ 4\pi \int \frac{\dd n_0}{\dd \phi_0} \psi_i \delta\phi
 	= - \int \epsilon \frac{\dd \psi_i}{\dd z} \frac{\dd \phi_0}{\dd z}
-	+ 4\pi \int [N_D - n_0] \psi_i.
+	+ 4\pi \int (N_D - n_0) \psi_i.
 \end{equation}
 
 Expanding $\delta\phi(z)$ over $\psi_i(z)$, $\delta\phi(x) = \sum_j \delta\phi_j \psi_j(z)$,
@@ -136,9 +144,9 @@ To account for quantum effects, we solve the Schr\"odinger and the Poisson
 equations self-consistently. First, we solve the Schr\"odinger equation
 \begin{equation}
 	\label{eq:schrodinger}
-	\frac{1}{2m} \frac{\dd^2}{\dd z^2} \psi(z) + V(z) \psi(z) = E \psi(z),
+	\frac{1}{2m} \frac{\dd^2}{\dd z^2} \psi(z) + V(z) \psi(z) = E \psi(z)
 \end{equation}
-where $V(z) = -\phi(z)$, and then use the first-order perturbation theory to turn a
+with $V(z) = -\phi(z)$, and then use the first-order perturbation theory to turn a
 linear Poisson equation into a non-linear one with the electron density given by
 \begin{equation}
 	n(\phi, z) = N_c^\mathrm{2D} \sum_n \lvert\psi_n^{(0)}(z)\rvert^2 \fFD^0
@@ -162,8 +170,8 @@ quasi-classical problem \eqref{eq:poisson}--\eqref{eq:c_density}.
 
 The Fermi--Dirac integrals $\fFD^0(x)$ and $\fFD^{-1}(x)$ have closed forms:
 \begin{equation}
-	\fFD^0(x) = \ln[ 1 + \exp(x) ], \quad
-	\fFD^{-1}(x) = \frac{1}{1 + \exp(-x)} = f_{\mathrm{FD}}(-x),
+	\fFD^0(x) = \ln[ 1 + e^x ], \quad
+	\fFD^{-1}(x) = \frac{1}{1 + e^{-x}} = f_{\mathrm{FD}}(-x),
 \end{equation}
 where $f_{\mathrm{FD}}(x)$ is the Fermi--Dirac distribution.
 
@@ -173,41 +181,102 @@ boundaries are assumed to be infinitely high, so we put
 	\psi(z = 0) = \psi(z = L) = 0.
 \end{equation}
 
-\textbf{Finite elements discretization.} Here we also use the Galerkin's method.
-Eq.~\eqref{eq:schrodinger} reduces to a generalized eigenvalue problem:
+\textbf{Finite elements discretization.} Here we also use the Galerkin's
+method. Eq.~\eqref{eq:schrodinger} reduces to a generalized eigenvalue problem:
 \begin{equation}
 	\sum_j \left( T_{ij} + V_{ij} \right) \psi_j = E_n B_{ij} \psi_j
 \end{equation}
 with
 \begin{equation}
-	T_{ij} = \frac{1}{2m }\int \frac{\dd \psi_i}{\dd z} \frac{\dd \psi_j}{\dd z}, \quad
+	T_{ij} = \frac{1}{2m }\int \frac{\dd \psi_i}{\dd z} \frac{\dd \psi_j}{\dd z},
+	\quad
 	V_{ij} = \int V \psi_i \psi_j, \quad B_{ij} = \int \psi_i \psi_j,
 \end{equation}
 where $B$ is positive-definite.
 
 \section{ARPES signal calculation}
 
-The single-particle density of a filled states at fixed depth~$z$ is given by
-the product
-\begin{eqnarray}
-	I(E, k_x, z) = f_{\mathrm{L}}\left[ E - \frac{k_x^2}{2m} + \phi(z) \right]
-				   f_{\mathrm{FD}}\left( \frac{E - F}{T} \right),
-\end{eqnarray}
-of the Lorentzian distribution $f_{\mathrm{L}}(E)$ with half width at half
-maximum $\delta_E$,
-\begin{eqnarray}
-	f_{\mathrm{L}}(E) = \frac{1}{\pi \delta_E}
-		\frac{1}{1 + \left( \dfrac{E}{\delta_E} \right)^2},
-\end{eqnarray}
-and
-
-The total ARPES signal is obtained by integration over~$z$. Assuming that the
-contribution of states at the depth~$z$ is proportional to $\exp(-z / \lambda)$,
-we obtain:
+The intensity of the ARPES signal at $k_y = 0$ is given by:
+\begin{multline}
+	I_0(E, k_x, k_z) \sim f_{\mathrm{FD}}\left[ \frac{E - F}{T} \right] \times\\
+		\times \sum_n f_{\mathrm{D}}\left[ E - E_n - \frac{k_x^2}{2m} \right]
+		\left\vert \int \dd z \, e^{-\ii k_z z - z / \lambda}
+		\psi_n(z) \right\vert^2,
+\end{multline}
+where the Lorentz distribution
 \begin{equation}
-	I(E, k_x) \sim \int_0^\infty \dd z \exp\left( -\frac{z}{\lambda} \right)
-				f_{\mathrm{L}}\left[ E - \frac{k_x^2}{2m} + \phi(z) \right]
-				f_{\mathrm{FD}}\left( \frac{E - F}{T} \right).
+	f_{\mathrm{D}}(E) \sim \frac{1}{1 + (E / \delta_D E)^2}
 \end{equation}
+accounts for disorder.
+
+If $\phi(z) = 0$, in the limit $L \to \infty$:
+\begin{equation}
+	I_0(E, k_x, k_z) \sim f_{\mathrm{FD}}\left[ \frac{E - F}{T} \right]
+		\int \dd k_z' \, f_{\mathrm{D}}\left[ E - \frac{k_x^2 + k_z'^2}{2m} \right]
+		\frac{1}{1 + [\lambda (k_z - k_z')]^2}.
+\end{equation}
+
+In the limit $\lambda \to \infty$ we recover a broadened parabolic spectrum:
+\begin{equation}
+	I_0(E, k_x, k_z) \sim f_{\mathrm{FD}}\left[ \frac{E - F}{T} \right]
+		f_{\mathrm{D}}\left[ E - \frac{k_x^2 + k_z^2}{2m} \right].
+\end{equation}
+
+At $k_z = 0$ we have:
+\begin{equation}
+	I_0(E, k_x) \sim f_{\mathrm{FD}}\left[ \frac{E - F}{T} \right] \sum_n
+		f_{\mathrm{D}}\left[ E - E_n - \frac{k_x^2}{2m} \right]
+		\left[ \int \dd z \, e^{- z / \lambda}
+		\psi_n(z) \right]^2.
+\end{equation}
+
+To account for apparatus broadenings, we futher convolve $I_0(E, k_x)$ with
+two normal distributions
+\begin{equation}
+	f_A(E) \sim \exp\left[ -\frac{E^2}{2(\delta_A E)^2} \right], \quad
+	f_A(k) \sim \exp\left[ -\frac{k^2}{2(\delta_A k)^2} \right]
+\end{equation}
+to obtain the final result:
+\begin{multline}
+	I(E, k_x) \sim I_0(E, k_x) \star (f_A(E) \otimes f_A(k)) = \\
+	= \int \dd k_x' \dd E' \, f_A(E') f_A(k_x') I_0(E - E', k_x - k_x').
+\end{multline}
+
+% The single-particle density of a filled state at
+% fixed depth~$z$ and fixed momentum $k_y = 0$ is given by the product
+% \begin{eqnarray}
+% 	I(E, k_x, z) = f_{\mathrm{L}}\left[ E - \frac{k_x^2}{2m} + \phi(z) \right]
+% 				   f_{\mathrm{FD}}\left( \frac{E - F}{T} \right),
+% \end{eqnarray}
+% of the Lorentzian distribution $f_{\mathrm{L}}(E)$ with half width at half
+% maximum $\delta_E$,
+% \begin{eqnarray}
+% 	f_{\mathrm{L}}(E) = \frac{1}{\pi \delta_E}
+% 		\frac{1}{1 + \left( \dfrac{E}{\delta_E} \right)^2},
+% \end{eqnarray}
+% and the Fermi--Dirac distribution.
+
+% \textbf{Quantum.} The expression is:
+% \begin{eqnarray}
+% 	I(E, k_x, z) = \sum_n f_{\mathrm{L}}\left[ E - \frac{k_x^2}{2m} - E_n \right]
+% 				   f_{\mathrm{FD}}\left( \frac{E - F}{T} \right)
+% 				   \lvert \psi_n(z) \rvert^2.
+% \end{eqnarray}
+
+% The total ARPES signal is obtained by integration over~$z$. Assuming that the
+% contribution of states at the depth~$z$ is proportional to $\exp(-z / \lambda)$,
+% we obtain:
+% \begin{equation}
+% 	I(E, k_x) \sim \int_0^\infty \dd z \exp\left( -\frac{z}{\lambda} \right)
+% 				f_{\mathrm{L}}\left[ E - \frac{k_x^2}{2m} + \phi(z) \right]
+% 				f_{\mathrm{FD}}\left( \frac{E - F}{T} \right),
+% \end{equation}
+% or
+% \begin{equation}
+% 	I(E, k_x) \sim \int_0^\infty \dd z \exp\left( -\frac{z}{\lambda} \right)
+% 				\sum_n f_{\mathrm{L}}\left[ E - \frac{k_x^2}{2m} + E_n \right]
+% 				f_{\mathrm{FD}}\left( \frac{E - F}{T} \right)
+% 				\lvert \psi_n(z) \rvert^2.
+% \end{equation}
 
 \end{document}

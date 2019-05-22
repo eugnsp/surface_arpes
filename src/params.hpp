@@ -6,7 +6,7 @@
 struct Params
 {
 	double length;
-
+	double eps;
 	double lattice_temp;
 	double effective_mass;
 	double dopant_conc;

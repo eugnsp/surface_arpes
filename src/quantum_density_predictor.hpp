@@ -8,114 +8,109 @@
 #include <es_util/numeric.hpp>
 
 #include <cstddef>
+#include <memory>
 #include <utility>
 
 // Calculator of electron density using the Scrodinger equation and the perturbation theory
 class Quantum_density_predictor
 {
 private:
-	using Potential_view = Poisson_solver_base::Solution_view<0>;
-	using Schrodinger_view = Schrodinger_solver_base::Solution_view<0>;
+	using Poisson_solution_view = Poisson_solver_base::Solution_view;
+	using Poisson_solution = Poisson_solver_base::Solution;
+	using Schrodinger_solution_view = Schrodinger_solver_base::Solution_view;
 
 public:
-	Quantum_density_predictor(const Params& params) : params_(params)
+	Quantum_density_predictor(const Params& params, Poisson_solution_view phi) :
+		params_(params), phi_(phi), prev_phi_(phi)
 	{
 		effective_dos_ = effective_2d_dos(params_);
 		fermi_level_ = charge_neutral_fermi_level(params_);
 	}
 
-	void xxx()
+	void before_solve()
 	{
-		prev_phi_solution_.resize(phi_.raw().size());
-		prev_phi_solution_ = phi_.raw();
+		prev_phi_ = phi_;
 	}
 
-	void set_potential_view(Potential_view phi)
+	void set_schrodinger_view(Schrodinger_solution_view psi)
 	{
-		phi_ = std::move(phi);
-		prev_phi_ = phi_.clone(prev_phi_solution_);
+		psi_ = std::make_unique<Schrodinger_solution_view>(psi);
 	}
 
-	void set_schrodinger_view(Schrodinger_view psi)
+	template<class Element, class Quadr, class Dofs>
+	auto get(const Dofs& dofs, const es_fe::Mesh1::Edge_view& edge) const
 	{
-		psi_ = std::move(psi);
-	}
+		es_la::Vector<std::pair<double, double>, Quadr::size> density{};
+		const auto phis = es_fe::at_quadr<Element, Quadr>(phi_, dofs);
+		const auto prev_phis = es_fe::at_quadr<Element, Quadr>(prev_phi_, dofs);
+		const auto dphis = (phis - prev_phis).eval();
 
-	template<class Element, class Quadr, class Dofs, class R = es_la::Vector<std::pair<double, double>, Quadr::size()>>
-	R get(const Dofs& dofs, const es_fe::Mesh1::Edge_view& edge) const
-	{
-		es_la::Vector<std::pair<double, double>, Quadr::size()> density;
-		for (std::size_t q = 0; q < Quadr::size(); ++q)
+		for (std::size_t is = 0; is < psi_->size(); ++is)
 		{
-			const auto phi = phi_.template get<Element, Quadr>(q, dofs);
-			const auto prev_phi = prev_phi_.template get<Element, Quadr>(q, dofs);
+			const auto energy = (*psi_)[is];
+			const auto psis = es_fe::at_quadr<Element, Quadr>(*psi_, is, edge);
 
-			double d = 0;
-			double dd = 0;
-			for (std::size_t is = 0; is < psi_.size(); ++is)
+			for (std::size_t iq = 0; iq < Quadr::size; ++iq)
 			{
 				// Note: eigenvectors are normalized with respect to the scalar product
 				// <f | g> = <f| B |g>, for the eigenproblem A |f> = lambda B |f>.
 
-				const auto energy = psi_[is];
-				const auto psi = psi_.template get<Element, Quadr>(is, q, edge);
-
-				const auto z = (-energy + phi - prev_phi + fermi_level_) / params_.lattice_temp;
+				const auto z = (-energy + dphis[iq] + fermi_level_) / params_.lattice_temp;
 				const auto f = es_util::ln_one_p_exp(z);
 				const auto fd = es_util::fermi(-z);
+				const auto psi_sq = es_util::sq(psis[iq]);
 
-				d += -effective_dos_ * psi * psi * f;
-				dd += -effective_dos_ / params_.lattice_temp * psi * psi * fd;
+				density[iq].first -= effective_dos_ * psi_sq * f;
+				density[iq].second -= effective_dos_ / params_.lattice_temp * psi_sq * fd;
 			}
-
-			density[q].first = params_.dopant_conc + d;
-			density[q].second = dd;
 		}
+
+		for (std::size_t iq = 0; iq < Quadr::size; ++iq)
+			density[iq].first += params_.dopant_conc;
 
 		return density;
 	}
 
-	template<class Element, class Quadr, class Dofs>
-	es_la::Vector<std::pair<double, double>, Quadr::size()> get2(const Dofs& dofs, double edge_length) const
-	{
-		es_la::Vector<std::pair<double, double>, Quadr::size()> density;
-		for (std::size_t q = 0; q < Quadr::size(); ++q)
-		{
-			const auto phi = phi_.template get<Element, Quadr>(q, dofs);
-			const auto prev_phi = prev_phi_.template get<Element, Quadr>(q, dofs);
+	// template<class Element, class Quadr, class Dofs>
+	// es_la::Vector<std::pair<double, double>, Quadr::size()> get2(const Dofs& dofs, double edge_length) const
+	// {
+	// 	es_la::Vector<std::pair<double, double>, Quadr::size()> density;
+	// 	for (std::size_t q = 0; q < Quadr::size(); ++q)
+	// 	{
+	// 		const auto phi = 0;		 // phi_.template get<Element, Quadr>(q, dofs);
+	// 		const auto prev_phi = 0; // prev_phi_.template get<Element, Quadr>(q, dofs);
 
-			double d = 0;
-			double dd = 0;
-			for (std::size_t is = 0; is < psi_.size(); ++is)
-			{
-				const auto energy = psi_[is];
-				const auto psi = psi_.template get<Element, Quadr>(is, q, dofs);
+	// 		double d = 0;
+	// 		double dd = 0;
+	// 		for (std::size_t is = 0; is < psi_.first->size(); ++is)
+	// 		{
+	// 			const auto energy = (*psi_.first)[is];
+	// 			const auto psi = 0; // psi_.template get<Element, Quadr>(is, q, dofs);
 
-				const auto z = (-energy + phi - prev_phi + fermi_level_) / params_.lattice_temp;
-				const auto f = es_util::ln_one_p_exp(z);
-				const auto fd = es_util::fermi(-z);
+	// 			const auto z = (-energy + phi - prev_phi + fermi_level_) / params_.lattice_temp;
+	// 			const auto f = es_util::ln_one_p_exp(z);
+	// 			const auto fd = es_util::fermi(-z);
 
-				d += -effective_dos_ * psi * psi * f;
-				dd += -effective_dos_ / params_.lattice_temp * psi * psi * fd;
+	// 			d += -effective_dos_ * psi * psi * f;
+	// 			dd += -effective_dos_ / params_.lattice_temp * psi * psi * fd;
 
-				//std::cout << z << '\n';
-			}
+	// 			//std::cout << z << '\n';
+	// 		}
 
-			density[q].first = d;
-			density[q].second = dd;
-		}
+	// 		density[q].first = d;
+	// 		density[q].second = dd;
+	// 	}
 
-		return density;
-	}
+	// 	return density;
+	// }
 
 private:
-	const Params& params_;
+	const Params params_;
 	double effective_dos_;
 	double fermi_level_;
 
-	Potential_view phi_;
-	Potential_view prev_phi_;
-	es_la::Vector_xd prev_phi_solution_;
+	const Poisson_solution_view phi_;
+	Poisson_solution prev_phi_;
 
-	Schrodinger_view psi_;
+	std::unique_ptr<Schrodinger_solution_view> psi_;
 };

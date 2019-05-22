@@ -10,8 +10,8 @@ int main(int argc, const char** argv)
 {
 	try
 	{
-		std::cout << "1D Poisson solver\n"
-				  << "=================\n"
+		std::cout << "Surface ARPES depletion/accumulation simulator\n"
+				  << "==============================================\n"
 				  << std::endl;
 
 		Simulator sim;

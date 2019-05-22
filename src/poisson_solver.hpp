@@ -8,7 +8,7 @@
 #include <es_fe/mesh/mesh1.hpp>
 #include <es_fe/var_list.hpp>
 
-#include <es_la/function.hpp>
+#include <es_la/dense.hpp>
 #include <es_la/sparse.hpp>
 #include <es_util/numeric.hpp>
 #include <es_util/phys.hpp>
@@ -25,25 +25,32 @@ template<class Density_predictor>
 class Poisson_solver final : public Poisson_solver_base
 {
 public:
-	Poisson_solver(
-		const es_fe::Mesh1& mesh, const Params& params, Density_predictor& density_predictor) :
-		Poisson_solver_base(mesh, params),
-		density_predictor_(density_predictor)
+	Poisson_solver(const es_fe::Mesh1& mesh, const Params& params) :
+		Poisson_solver_base(mesh, params), density_predictor_(params, solution_view())
 	{}
 
 	void init()
 	{
 		Poisson_solver_base::init();
-		density_predictor_.set_potential_view(solution_view());
+		solution_ = 0; // Local charge neutrality at the beginning
+	}
 
-		generate_initial_guess();
+	void solve()
+	{
+		density_predictor_.before_solve();
+		Poisson_solver_base::solve();
+	}
+
+	Density_predictor& density_predictor()
+	{
+		return density_predictor_;
 	}
 
 private:
 	virtual void assemble() override
 	{
 		matrix_.zero();
-		rhs_.zero();
+		rhs_ = 0;
 
 		for (const auto& face : mesh().edges())
 			assemble_on_edge(face);
@@ -51,20 +58,17 @@ private:
 
 	void assemble_on_edge(const es_fe::Mesh1::Edge_view& edge)
 	{
-		const auto eps = 10.;
+		const auto eps = this->p_.eps;
 		const auto length = es_fe::length(edge);
 
 		using Stiff_quadr = es_fe::Quadr<2 * (Poisson_element::order - 1), 1>;
 		using Mass_quadr = es_fe::Quadr<2 * Poisson_element::order, 1>;
 
-		const auto grads =
-			es_fe::gradients<Poisson_element, Stiff_quadr>(es_fe::inv_jacobian(edge));
-		const auto stiffness_matrix =
-			es_fe::stiffness_matrix<Poisson_element, Stiff_quadr>(grads, length * eps);
+		const auto grads = es_fe::gradients<Poisson_element, Stiff_quadr>(es_fe::inv_jacobian(edge));
+		const auto stiffness_matrix = es_fe::stiffness_matrix<Poisson_element, Stiff_quadr>(grads, length * eps);
 
 		const auto dofs = system().dofs(edge);
-		const auto density =
-			density_predictor_.template get<Poisson_element, Mass_quadr>(dofs, edge);
+		const auto density = density_predictor_.template get<Poisson_element, Mass_quadr>(dofs, edge);
 
 		const auto mass_matrix = es_fe::mass_matrix<Poisson_element, Mass_quadr>(
 			[&density](auto q) { return density[q].second; }, es_util::math::four_pi * length);
@@ -111,8 +115,8 @@ public:
 		{
 			System::template Var_vertex_dofs<0> vertex_dofs;
 			system().dof_mapper().template vertex_dofs<0>(vertex, vertex_dofs);
-			//			ec[*vertex] = -es_util::au::to_volt(solution_[vertex_dofs[0].index]);
-			ec[*vertex] = -solution_[vertex_dofs[0].index];
+			ec[*vertex] = -es_util::au::to_volt(solution_[vertex_dofs[0].index]);
+			// ec[*vertex] = -solution_[vertex_dofs[0].index];
 			// n[*vertex] = es_util::au::to_per_cm3(density_predictor_.get2(vertex));
 		}
 
@@ -121,8 +125,7 @@ public:
 			using Quadr = es_fe::Quadr<1, 1>;
 
 			const auto dofs = system().dofs(edge);
-			const auto density =
-				density_predictor_.template get<Poisson_element, Quadr>(dofs, edge);
+			const auto density = density_predictor_.template get<Poisson_element, Quadr>(dofs, edge);
 
 			n[**edge] = es_util::au::to_per_cm3(density[0].first);
 		}
@@ -137,5 +140,5 @@ public:
 	}
 
 private:
-	Density_predictor& density_predictor_;
+	Density_predictor density_predictor_;
 };

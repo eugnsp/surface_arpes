@@ -11,7 +11,7 @@
 #include <es_fe/mesh/mesh1.hpp>
 #include <es_fe/var_list.hpp>
 
-#include <es_la/function.hpp>
+#include <es_la/dense.hpp>
 #include <es_la/sparse.hpp>
 #include <es_util/numeric.hpp>
 #include <es_util/phys.hpp>
@@ -27,7 +27,7 @@
 class Schrodinger_solver final : public Schrodinger_solver_base
 {
 private:
-	using Potential_view = Poisson_solver_base::Solution_view<0>;
+	using Potential_view = Poisson_solver_base::Solution_view;
 
 public:
 	Schrodinger_solver(const es_fe::Mesh1& mesh, const Params& params, Potential_view phi) :
@@ -49,17 +49,16 @@ private:
 	{
 		const auto max_e = charge_neutral_fermi_level(p_) + 7 * p_.lattice_temp;
 
-		const auto n_states =
-			es_util::trapez_int(
-				mesh().n_vertices(), [this](auto i) { return mesh().vertex(i).x(); },
-				[this, max_e](auto i) {
-					const auto u = max_e + phi_[i];
-					return u <= 0 ? 0. : std::sqrt(2 * p_.effective_mass * u);
-				},
-				0.) /
-			es_util::math::pi;
+		const auto n_states = es_util::trapez_int(
+								  mesh().n_vertices(), [this](auto i) { return mesh().vertex(i).x(); },
+								  [this, max_e](auto i) {
+									  const auto u = max_e + phi_[i];
+									  return u <= 0 ? 0. : std::sqrt(2 * p_.effective_mass * u);
+								  },
+								  0.) /
+							  es_util::math::pi;
 
-		return static_cast<unsigned int>(5 + 1.5 * n_states);
+		return static_cast<unsigned int>(5 + 1.25 * n_states);
 	}
 
 	virtual void assemble() override
@@ -78,19 +77,16 @@ private:
 		using Stiff_quadr = es_fe::Quadr<2 * (Schrodinger_element::order - 1), 1>;
 		using Mass_quadr = es_fe::Quadr<2 * Schrodinger_element::order, 1>;
 
-		const auto grads =
-			es_fe::gradients<Schrodinger_element, Stiff_quadr>(es_fe::inv_jacobian(edge));
-		const auto stiffness_matrix = es_fe::stiffness_matrix<Schrodinger_element, Stiff_quadr>(
-			grads, length / (2 * p_.effective_mass));
+		const auto grads = es_fe::gradients<Schrodinger_element, Stiff_quadr>(es_fe::inv_jacobian(edge));
+		const auto stiffness_matrix =
+			es_fe::stiffness_matrix<Schrodinger_element, Stiff_quadr>(grads, length / (2 * p_.effective_mass));
 
 		const auto dofs = system().dofs(edge);
 
 		const auto mass_matrix = es_fe::mass_matrix<Schrodinger_element, Mass_quadr>(length);
 
 		const auto potential_matrix = es_fe::mass_matrix<Schrodinger_element, Mass_quadr>(
-			[this, &edge](
-				auto q) { return phi_.template get<Schrodinger_element, Mass_quadr>(q, edge); },
-			-length);
+			[this, &edge](auto q) { return phi_.template get<Schrodinger_element, Mass_quadr>(q, edge); }, -length);
 
 		for (es_fe::Local_index c = 0; c < dofs.size(); ++c)
 			if (dofs[c].is_free)
@@ -114,7 +110,6 @@ public:
 		es_la::Matfile_writer m(file_name);
 		m.write("psi", eigen_vectors_);
 		m.write("en", eigen_values_);
-		m.write("nq", n_eigen_values_);
 	}
 
 private:

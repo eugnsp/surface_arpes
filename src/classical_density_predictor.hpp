@@ -9,77 +9,42 @@
 #include <cstddef>
 #include <utility>
 
-namespace es_la
-{
-template<typename Value, std::size_t size>
-using Vector3 = Matrix<Value, size, (std::size_t)1>;
-}
-
-struct U
-{
-    static constexpr int i()
-    {
-        return 0;
-    }
-};
-
 // Calculator of electron density using the Thomas-Fermi (quasi-classical) approximation
 class Classical_density_predictor
 {
 private:
-	using Potential_view = Poisson_solver_base::Solution_view<0>;
+	using Poisson_solution_view = Poisson_solver_base::Solution_view;
 
 public:
-	Classical_density_predictor(const Params& params) : params_(params)
+	Classical_density_predictor(const Params& params, Poisson_solution_view phi) : p_(params), phi_(phi)
 	{
-		effective_dos_ = effective_3d_dos(params_);
-		fermi_level_ = charge_neutral_fermi_level(params_);
+		effective_dos_ = effective_3d_dos(p_);
+		fermi_level_ = charge_neutral_fermi_level(p_);
 	}
 
-	void set_potential_view(Potential_view phi)
-	{
-		phi_ = std::move(phi);
-	}
-
-	template<class Element, class Quadr, class Dofs, class R = es_la::Vector<std::pair<double, double>, Quadr::size()>>
-	R get(const Dofs& dofs, const es_fe::Mesh1::Edge_view&) const
-	{
-		es_la::Vector<std::pair<double, double>, Quadr::size()> density;
-		for (std::size_t q = 0; q < Quadr::size(); ++q)
-		{
-			const auto phi = phi_.template get<Element, Quadr>(q, dofs);
-
-			const auto z = (phi + fermi_level_) / params_.lattice_temp;
-			density[q].first = params_.dopant_conc - effective_dos_ * es_util::fd_int_half(z);
-			density[q].second =
-				-effective_dos_ / params_.lattice_temp * es_util::fd_int_minus_half(z);
-		}
-
-		return density;
-	}
+	void before_solve()
+	{}
 
 	template<class Element, class Quadr, class Dofs>
-	es_la::Vector<std::pair<double, double>, Quadr::size()> get2(
-		const Dofs& dofs, double /* edge_length */) const
+	auto get(const Dofs& dofs, const es_fe::Mesh1::Edge_view&) const
 	{
-		es_la::Vector<std::pair<double, double>, Quadr::size()> density;
-		for (std::size_t q = 0; q < Quadr::size(); ++q)
-		{
-			const auto phi = phi_.template get<Element, Quadr>(q, dofs);
+		es_la::Vector<std::pair<double, double>, Quadr::size> density;
 
-			const auto z = (phi + fermi_level_) / params_.lattice_temp;
-			density[q].first = -effective_dos_ * es_util::fd_int_half(z);
-			density[q].second =
-				-effective_dos_ / params_.lattice_temp * es_util::fd_int_minus_half(z);
+		const auto phis = es_fe::at_quadr<Element, Quadr>(phi_, dofs);
+		for (std::size_t iq = 0; iq < Quadr::size; ++iq)
+		{
+			const auto z = (phis[iq] + fermi_level_) / p_.lattice_temp;
+			density[iq].first = p_.dopant_conc - effective_dos_ * es_util::fd_int_half(z);
+			density[iq].second = -effective_dos_ / p_.lattice_temp * es_util::fd_int_minus_half(z);
 		}
 
 		return density;
 	}
 
 private:
-	const Params& params_;
+	const Params& p_;
 	double effective_dos_;
 	double fermi_level_;
 
-	Potential_view phi_;
+	const Poisson_solution_view phi_;
 };
