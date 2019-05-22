@@ -6,7 +6,7 @@ This is a code to calculate ARPES spectra of slabs with an accumulation
 or a depletion surface layer. The calculation proceeds in two steps:
 
 1. The Poisson and the Schr&ouml;dinger equations are solved self-consistently
-to obtain eigen-pairs (<code>E<sub>n</sub></code>, <code>&psi;<sub>n</sub>(z)</code>).
+to obtain eigenpairs (<code>E<sub>n</sub></code>, <code>&psi;<sub>n</sub>(z)</code>).
 2. ARPES spectra are then calculated using a Fourier transform of
 <code>&psi;<sub>n</sub>(z)</code>, followed by a convolution with normal
 distributions to account for instrumental broadening.
@@ -15,28 +15,29 @@ distributions to account for instrumental broadening.
 are used to discretize the Poisson and the Schr&ouml;dinger equations.
 The Intel MKL library is used to solve linear systems, generalized eigenvalue
 system, compute Fourier transforms and convolution. The mathematical details
-can be found in this [PDF file](doc/model.pdf).
+can be found in [this PDF file](doc/model.pdf).
 
 The results are exported into Matlab/Octave MAT-files and Gnuplot binary
 matrix files.
 
 GCC 8.3 was used to compile the code. Clang doesn't work due to an `auto`
 non-type template parameter deduction [bug](https://stackoverflow.com/questions/56125811/auto-non-type-template-parameter-ambiguous-partial-specializations-in-clang).
+It can easily be overcome, if need be.
 
 ## Results
 
 (Note: all images below are presented for exposition only, no attempt
 has been made here to fit any experimental data.)
 
-Accumulation layer with one bound state:
+Accumulation layer with one bound state at <code>k<sub>z</sub> = 0</code>:
 
 ![Accumulation layer with one bound state](example/accum1.png)
 
-Accumulation layer with two bound states:
+Accumulation layer with two bound states at <code>k<sub>z</sub> = 0</code>:
 
 ![Accumulation layer with two bound states](example/accum2.png)
 
-Depletion layer:
+Depletion layer at <code>k<sub>z</sub> = 0</code>:
 
 ![Depletion layer](example/depl.png)
 
