@@ -1,4 +1,4 @@
-# ARPES
+# ARPES spectra calculator
 
 ## Synopsis
 
@@ -11,16 +11,17 @@ to obtain eigen-pairs (<code>E<sub>n</sub></code>, <code>&psi;<sub>n</sub>(z)</c
 <code>&psi;<sub>n</sub>(z)</code>, followed by a convolution with normal
 distributions to account for instrumental broadening.
 
-1D finite elements (`es_fe` library) are used to discretize the Poisson
-and the Schr&ouml;dinger equations. The Intel MKL library is used to solve
-linear systems, compute Fourier transforms and convolution. The
-mathematical details can be found in this [PDF file](doc/model.pdf).
+1D finite elements ([`es_fe` library](https://github.com/eugnsp/es_fe))
+are used to discretize the Poisson and the Schr&ouml;dinger equations.
+The Intel MKL library is used to solve linear systems, generalized eigenvalue
+system, compute Fourier transforms and convolution. The mathematical details
+can be found in this [PDF file](doc/model.pdf).
 
 The results are exported into Matlab/Octave MAT-files and Gnuplot binary
 matrix files.
 
 GCC 8.3 was used to compile the code. Clang doesn't work due to an `auto`
-non-type template parameter deduction bug.
+non-type template parameter deduction [bug](https://stackoverflow.com/questions/56125811/auto-non-type-template-parameter-ambiguous-partial-specializations-in-clang).
 
 ## Results
 
@@ -42,7 +43,10 @@ Depletion layer:
 ## References
 
 1. V.N.Strocov. *Photoemission response of 2D states.*
-[arXiv preprint](https://arxiv.org/abs/1801.07505) (2018).
-2. S.Moser at al. *How to extract the surface potential profile from
-the ARPES signature of a 2DEG.*
-[J. Electron. Spectrosc. **225**, 16 (2018).](https://doi.org/10.1016/j.elspec.2018.01.008)
+[arXiv preprint (2018)](https://arxiv.org/abs/1801.07505).
+2. S.Moser et al. *How to extract the surface potential profile
+from the ARPES signature of a 2DEG.*
+[J. Electron. Spectrosc. **225**, 16 (2018)](https://doi.org/10.1016/j.elspec.2018.01.008).
+3. A.Trellakis et al. *Iteration scheme for the solution of the
+two-dimensional Schr&ouml;dinger-Poisson equations in quantum
+structures*. [J. Appl. Phys. 81, 7880 (1997)](https://doi.org/10.1063/1.365396).

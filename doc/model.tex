@@ -105,14 +105,14 @@ system. Hence, we start Newton's iterations from $\phi_0(0) = \phi_b$, $\phi_0(z
 \textbf{Finite elements discretization.} Galerkin's method is used for numerical solution
 of eq.~\eqref{eq:poisson_newton}. We multiply it by the test function~$\psi_i(z)$ and
 integrate by parts taking into account the boundary conditions:
-\begin{equation}
-	\int \frac{\dd \psi_i}{\dd z} \frac{\dd \delta\phi}{\dd z}
-	+ 4\pi \int \frac{\dd n_0}{\dd \phi_0} \psi_i \delta\phi
-	= - \int \epsilon \frac{\dd \psi_i}{\dd z} \frac{\dd \phi_0}{\dd z}
-	+ 4\pi \int (N_D - n_0) \psi_i.
-\end{equation}
+\begin{multline}
+	\int \dd z \, \frac{\dd \psi_i}{\dd z} \frac{\dd \delta\phi}{\dd z}
+	+ 4\pi \int \dd z \, \frac{\dd n_0}{\dd \phi_0} \psi_i \delta\phi = \\
+	= - \int \dd z \, \epsilon \frac{\dd \psi_i}{\dd z} \frac{\dd \phi_0}{\dd z}
+	+ 4\pi \int \dd z \, (N_D - n_0) \psi_i.
+\end{multline}
 
-Expanding $\delta\phi(z)$ over $\psi_i(z)$, $\delta\phi(x) = \sum_j \delta\phi_j \psi_j(z)$,
+Expanding $\delta\phi(z)$ over $\psi_i(z)$, $\delta\phi(x) = \sum_j \delta\phi_j \psi_j(z)$, = \\
 we obtain the matrix equation:
 \begin{equation}
 	\sum_j \left( S_{ij} - M_{ij} \right) \delta\phi_j = r_i
@@ -120,20 +120,20 @@ we obtain the matrix equation:
 with
 \begin{equation}
 \begin{split}
-	S_{ij} &= \int \epsilon \frac{\dd \psi_i}{\dd z} \frac{\dd \psi_j}{\dd z}, \quad
-	M_{ij} = -4\pi \int \frac{\dd n_0}{\dd \phi_0} \psi_i \psi_j, \\
-	r_i &= - \sum_j S_{ij} \phi_{0j} + 4\pi \int (N_D - n_0) \psi_i.
+	S_{ij} &= \int \dd z \, \epsilon \frac{\dd \psi_i}{\dd z} \frac{\dd \psi_j}{\dd z}, \quad
+	M_{ij} = -4\pi \int \dd z \, \frac{\dd n_0}{\dd \phi_0} \psi_i \psi_j, \\
+	r_i &= - \sum_j S_{ij} \phi_{0j} + 4\pi \int \dd z \, (N_D - n_0) \psi_i.
 \end{split}
 \end{equation}
 
 Integrals are calculated using Gauss quadratures $\{z_k, w_k\}$. In particular:
 \begin{equation}
-	\int n_0 \psi_i = \sum_k w_k n[\phi_0(z_k)] \psi_i(z_k)
+	\int \dd z \, n_0 \psi_i = \sum_k w_k n[\phi_0(z_k)] \psi_i(z_k)
 	= \sum_k w_k n\Big[ \sum_l \phi_{0l} \psi_l(z_k) \Big] \psi_i(z_k),
 \end{equation}
 and
 \begin{equation}
-	\int \frac{\dd n_0}{\dd \phi_0} \psi_i \psi_j
+	\int \dd z \, \frac{\dd n_0}{\dd \phi_0} \psi_i \psi_j
 	= \sum_k w_k \frac{\dd n}{\dd \phi}
 		\Big[ \sum_l \phi_{0l} \psi_l(z_k) \Big] \psi_i(z_k) \psi_j(z_k).
 \end{equation}
@@ -188,9 +188,10 @@ method. Eq.~\eqref{eq:schrodinger} reduces to a generalized eigenvalue problem:
 \end{equation}
 with
 \begin{equation}
-	T_{ij} = \frac{1}{2m }\int \frac{\dd \psi_i}{\dd z} \frac{\dd \psi_j}{\dd z},
-	\quad
-	V_{ij} = \int V \psi_i \psi_j, \quad B_{ij} = \int \psi_i \psi_j,
+	T_{ij} = \frac{1}{2m }\int \dd z \, \frac{\dd \psi_i}{\dd z}
+		\frac{\dd \psi_j}{\dd z}, \quad
+	V_{ij} = \int \dd z \, V \psi_i \psi_j, \quad
+	B_{ij} = \int \dd z \,\psi_i \psi_j,
 \end{equation}
 where $B$ is positive-definite.
 
@@ -238,7 +239,7 @@ two normal distributions
 \end{equation}
 to obtain the final result:
 \begin{multline}
-	I(E, k_x) \sim I_0(E, k_x) \star (f_A(E) \otimes f_A(k)) = \\
+	I(E, k_x) \sim I_0(E, k_x) \star (f_A(E) \otimes f_A(k_x)) = \\
 	= \int \dd k_x' \dd E' \, f_A(E') f_A(k_x') I_0(E - E', k_x - k_x').
 \end{multline}
 
