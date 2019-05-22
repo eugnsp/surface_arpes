@@ -3,11 +3,11 @@
 ## Synopsis
 
 This is a code to calculate ARPES spectra of slabs with an accumulation
-or a depletion surface layer. The calculation preceeds in two steps:
+or a depletion surface layer. The calculation proceeds in two steps:
 
 1. The Poisson and the Schr&ouml;dinger equations are solved self-consistently
 to obtain eigen-pairs (<code>E<sub>n</sub></code>, <code>&psi;<sub>n</sub>(z)</code>).
-2. ARPES spectra are calculated using a Fourier transform of
+2. ARPES spectra are then calculated using a Fourier transform of
 <code>&psi;<sub>n</sub>(z)</code>, followed by a convolution with normal
 distributions to account for instrumental broadening.
 
@@ -24,6 +24,9 @@ non-type template parameter deduction bug.
 
 ## Results
 
+(Note: all images below are presented for exposition only, no attempt
+has been made here to fit any experimental data.)
+
 Accumulation layer with one bound state:
 
 ![Accumulation layer with one bound state](example/accum1.png)
@@ -39,7 +42,7 @@ Depletion layer:
 ## References
 
 1. V.N.Strocov. *Photoemission response of 2D states.*
-[arXiv preprint](https://arxiv.org/abs/1801.07505), 2018.
+[arXiv preprint](https://arxiv.org/abs/1801.07505) (2018).
 2. S.Moser at al. *How to extract the surface potential profile from
 the ARPES signature of a 2DEG.*
-[J. Electron. Spectrosc. **225**, 16, 2018.](https://doi.org/10.1016/j.elspec.2018.01.008)
+[J. Electron. Spectrosc. **225**, 16 (2018).](https://doi.org/10.1016/j.elspec.2018.01.008)
