@@ -2,7 +2,6 @@
 #include "params.hpp"
 #include "poisson_solver_base.hpp"
 
-#include <es_fe/mesh/mesh1.hpp>
 #include <es_la/dense.hpp>
 #include <es_util/numeric.hpp>
 

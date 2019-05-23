@@ -3,7 +3,6 @@
 #include "poisson_solver_base.hpp"
 #include "schrodinger_solver_base.hpp"
 
-#include <es_fe/mesh/mesh1.hpp>
 #include <es_la/dense.hpp>
 #include <es_util/numeric.hpp>
 
@@ -70,39 +69,6 @@ public:
 
 		return density;
 	}
-
-	// template<class Element, class Quadr, class Dofs>
-	// es_la::Vector<std::pair<double, double>, Quadr::size()> get2(const Dofs& dofs, double edge_length) const
-	// {
-	// 	es_la::Vector<std::pair<double, double>, Quadr::size()> density;
-	// 	for (std::size_t q = 0; q < Quadr::size(); ++q)
-	// 	{
-	// 		const auto phi = 0;		 // phi_.template get<Element, Quadr>(q, dofs);
-	// 		const auto prev_phi = 0; // prev_phi_.template get<Element, Quadr>(q, dofs);
-
-	// 		double d = 0;
-	// 		double dd = 0;
-	// 		for (std::size_t is = 0; is < psi_.first->size(); ++is)
-	// 		{
-	// 			const auto energy = (*psi_.first)[is];
-	// 			const auto psi = 0; // psi_.template get<Element, Quadr>(is, q, dofs);
-
-	// 			const auto z = (-energy + phi - prev_phi + fermi_level_) / params_.lattice_temp;
-	// 			const auto f = es_util::ln_one_p_exp(z);
-	// 			const auto fd = es_util::fermi(-z);
-
-	// 			d += -effective_dos_ * psi * psi * f;
-	// 			dd += -effective_dos_ / params_.lattice_temp * psi * psi * fd;
-
-	// 			//std::cout << z << '\n';
-	// 		}
-
-	// 		density[q].first = d;
-	// 		density[q].second = dd;
-	// 	}
-
-	// 	return density;
-	// }
 
 private:
 	const Params params_;

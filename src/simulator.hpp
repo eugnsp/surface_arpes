@@ -62,9 +62,9 @@ public:
 		//* Quasi-classical solution */
 
 		const auto x_grid = grid.grid();
-		es_fe::Mesh1 mesh_(x_grid);
+		es_fe::Mesh1 mesh(x_grid);
 
-		Poisson_solver<Classical_density_predictor> cl_solver(mesh_, params);
+		Poisson_solver<Classical_density_predictor> cl_solver(mesh, params);
 		cl_solver.init();
 		cl_solver.solve();
 		cl_solver.write("p0.mat");
@@ -72,11 +72,11 @@ public:
 		///////////////////////////////////////////////////////////////////////
 		//* Quantum solution */
 
-		Poisson_solver<Quantum_density_predictor> q_solver(mesh_, params);
+		Poisson_solver<Quantum_density_predictor> q_solver(mesh, params);
 		q_solver.init();
 		q_solver.set_init_guess(cl_solver.solution());
 
-		Schrodinger_solver schrod_solver(mesh_, params, q_solver.solution_view());
+		Schrodinger_solver schrod_solver(mesh, params, q_solver.solution_view());
 		q_solver.density_predictor().set_schrodinger_view(schrod_solver.solution_view());
 
 		schrod_solver.init();
@@ -125,7 +125,6 @@ public:
 		const auto ks = es_util::Linear_grid<double>::from_min_max(kx_min, kx_max, nk);
 
 		const auto fermi = charge_neutral_fermi_level(params);
-		const auto zs = [&x_grid](auto i) { return x_grid[i].x(); };
 
 		// auto poisson_solution = q_solver.solution_view();
 		//auto poisson_solution = cl_solver.solution_view();
@@ -172,24 +171,24 @@ public:
 
 		es_la::Vector_xd int_exp_psi(psi.size());
 		for (std::size_t i = 0; i < psi.size(); ++i)
-			int_exp_psi[i] = es_util::trapez_int(
-				grid.size(), zs,
-				[&](auto iz) { return std::exp(-zs(iz) / lambda) * psi.at(static_cast<es_fe::Vertex_index>(iz), i); });
+		{
+			const auto zs = [&](auto v) { return mesh.vertex(v).x(); };
+			const auto fn = [&](auto v) { return std::exp(-zs(v) / lambda) * psi.at(v, i); };
+			int_exp_psi[i] = es_util::trapez_int(mesh.n_vertices(), zs, fn);
+		}
 
 		es_la::Matrix_xd arp(ne, nk, 0);
 		for (std::size_t ie = 0; ie < ne; ++ie)
 		{
-			const auto e = es[ie];
-			const auto dir = es_util::fermi((e - fermi) / params.lattice_temp);
-
+			const auto fd = es_util::fermi((es[ie] - fermi) / params.lattice_temp);
 			for (std::size_t ik = 0; ik < nk; ++ik)
 			{
 				const auto k_sq_over_2m = es_util::sq(ks[ik]) / (2 * params.effective_mass);
-				for (std::size_t iq = 0; iq < psi.size(); ++iq)
+				for (std::size_t i = 0; i < psi.size(); ++i)
 				{
-					const auto z = e - (psi[iq] + k_sq_over_2m);
-					auto lor = 1 / (1 + es_util::sq(z / de_disorder));
-					arp(ie, ik) += lor * dir * es_util::sq(int_exp_psi[iq]);
+					const auto e = es[ie] - (psi[i] + k_sq_over_2m);
+					auto lor = 1 / (1 + es_util::sq(e / de_disorder));
+					arp(ie, ik) += lor * fd * es_util::sq(int_exp_psi[i]);
 				}
 			}
 		}
@@ -205,6 +204,7 @@ public:
 		mat.write("de_app", es_util::au::to_evolt(de_app));
 		mat.write("dkx_app", 1 / es_util::au::to_ang(1 / dkx_app));
 
+		mat.write("lambda", es_util::au::to_nm(lambda));
 		mat.write("arp0", arp);
 
 		gauss_rows_convolution(arp, dkx_app / (kx_max - kx_min));

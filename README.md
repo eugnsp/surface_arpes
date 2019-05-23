@@ -6,7 +6,7 @@ This is a code to calculate ARPES spectra of slabs with an accumulation
 or a depletion surface layer. The calculation proceeds in two steps:
 
 1. The Poisson and the Schr&ouml;dinger equations are solved self-consistently
-to obtain eigenpairs (<code>E<sub>n</sub></code>, <code>&psi;<sub>n</sub>(z)</code>).
+to obtain eigenpairs {<code>E<sub>n</sub></code>, <code>&psi;<sub>n</sub>(z)</code>}.
 2. ARPES spectra are then calculated using a Fourier transform of
 <code>&psi;<sub>n</sub>(z)</code>, followed by a convolution with normal
 distributions to account for instrumental broadening.
@@ -26,8 +26,8 @@ It can easily be overcome, if need be.
 
 ## Results
 
-(Note: all images below are presented for exposition only, no attempt
-has been made here to fit any experimental data.)
+**NB**: all images below are presented for exposition only, no attempt
+has been made here to fit any experimental data.
 
 Accumulation layer with one bound state at <code>k<sub>z</sub> = 0</code>:
 
@@ -40,6 +40,22 @@ Accumulation layer with two bound states at <code>k<sub>z</sub> = 0</code>:
 Depletion layer at <code>k<sub>z</sub> = 0</code>:
 
 ![Depletion layer](example/depl.png)
+
+## How to run
+
+**NB**: this code is under development, and is not a ready-to-use tool for an
+end-user.
+
+```sh
+git clone --recursive https://github.com/eugnsp/surface_arpes.git
+cd surface_arpes
+mkdir build
+cd build
+cmake .. && cmake --build .
+```
+
+`MKLROOT` environment variable should be set to point to the MKL installation
+directory.
 
 ## References
 
