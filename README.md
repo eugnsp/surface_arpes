@@ -46,16 +46,16 @@ Depletion layer at <code>k<sub>z</sub> = 0</code>:
 **NB**: this code is under development, and is not a ready-to-use tool for an
 end-user.
 
-```sh
-git clone --recursive https://github.com/eugnsp/surface_arpes.git
-cd surface_arpes
-mkdir build
-cd build
-cmake .. && cmake --build .
-```
+1. Set `MKLROOT` environment variable to point to the MKL installation directory.
+2. Run
+    ```sh
+    git clone --recursive https://github.com/eugnsp/surface_arpes.git
+    cd surface_arpes
+    mkdir build
+    cd build
+    cmake .. && cmake --build .
+    ```
 
-`MKLROOT` environment variable should be set to point to the MKL installation
-directory.
 
 ## References
 
