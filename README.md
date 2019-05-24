@@ -32,17 +32,20 @@ made here to fit any experimental data.
 Accumulation layer with one bound state:
 
 ![Accumulation layer with one bound state](example/accum1_sm.png)
-[Large image](example/accum1.png)
+
+([Large image](example/accum1.png))
 
 Accumulation layer with two bound states:
 
 ![Accumulation layer with two bound states](example/accum2_sm.png)
-[Large image](example/accum2.png)
+
+([Large image](example/accum2.png))
 
 Depletion layer:
 
 ![Depletion layer](example/depl_sm.png)
-[Large image](example/depl.png)
+
+([Large image](example/depl.png))
 
 ## How to run
 
