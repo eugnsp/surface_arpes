@@ -1,6 +1,7 @@
 #pragma once
 #include "params.hpp"
 #include "poisson_solver_base.hpp"
+#include "tools.hpp"
 
 #include <es_la/dense.hpp>
 #include <es_util/numeric.hpp>
@@ -32,9 +33,9 @@ public:
 		const auto phis = es_fe::at_quadr<Element, Quadr>(phi_, dofs);
 		for (std::size_t iq = 0; iq < Quadr::size; ++iq)
 		{
-			const auto z = (phis[iq] + fermi_level_) / p_.lattice_temp;
+			const auto z = (phis[iq] + fermi_level_) / p_.temp;
 			density[iq].first = p_.dopant_conc - effective_dos_ * es_util::fd_int_half(z);
-			density[iq].second = -effective_dos_ / p_.lattice_temp * es_util::fd_int_minus_half(z);
+			density[iq].second = -effective_dos_ / p_.temp * es_util::fd_int_minus_half(z);
 		}
 
 		return density;

@@ -26,20 +26,23 @@ It can easily be overcome, if need be.
 
 ## Results
 
-**NB**: all images below are presented for exposition only, no attempt
-has been made here to fit any experimental data.
+All images below are presented for exposition only, no attempt has been
+made here to fit any experimental data.
 
-Accumulation layer with one bound state at <code>k<sub>z</sub> = 0</code>:
+Accumulation layer with one bound state:
 
-![Accumulation layer with one bound state](example/accum1.png)
+![Accumulation layer with one bound state](example/accum1_sm.png)
+[Large image](example/accum1.png)
 
-Accumulation layer with two bound states at <code>k<sub>z</sub> = 0</code>:
+Accumulation layer with two bound states:
 
-![Accumulation layer with two bound states](example/accum2.png)
+![Accumulation layer with two bound states](example/accum2_sm.png)
+[Large image](example/accum2.png)
 
-Depletion layer at <code>k<sub>z</sub> = 0</code>:
+Depletion layer:
 
-![Depletion layer](example/depl.png)
+![Depletion layer](example/depl_sm.png)
+[Large image](example/depl.png)
 
 ## How to run
 
@@ -47,22 +50,27 @@ Depletion layer at <code>k<sub>z</sub> = 0</code>:
 end-user.
 
 Set `MKLROOT` environment variable to point to the MKL installation directory.
+Then:
 
 ```sh
 git clone --recursive https://github.com/eugnsp/surface_arpes.git
 cd surface_arpes
 mkdir build
 cd build
-cmake .. && cmake --build .
+cmake .. && make
+
+./arpes < ../example/accum1.txt
+../plot/plot_all.sh
 ```
 
 ## References
 
-1. V.N.Strocov. *Photoemission response of 2D states.*
+1. V.N.Strocov. *Photoemission response of 2D states.*\
 [arXiv preprint (2018)](https://arxiv.org/abs/1801.07505).
 2. S.Moser et al. *How to extract the surface potential profile
-from the ARPES signature of a 2DEG.*
+from the ARPES signature of a 2DEG.*\
 [J. Electron. Spectrosc. **225**, 16 (2018)](https://doi.org/10.1016/j.elspec.2018.01.008).
 3. A.Trellakis et al. *Iteration scheme for the solution of the
 two-dimensional Schr&ouml;dinger-Poisson equations in quantum
-structures*. [J. Appl. Phys. 81, 7880 (1997)](https://doi.org/10.1063/1.365396).
+structures*.\
+[J. Appl. Phys. 81, 7880 (1997)](https://doi.org/10.1063/1.365396).

@@ -2,6 +2,7 @@
 #include "params.hpp"
 #include "poisson_solver_base.hpp"
 #include "schrodinger_solver_base.hpp"
+#include "tools.hpp"
 
 #include <es_fe/dof/tools.hpp>
 #include <es_fe/geometry.hpp>
@@ -47,7 +48,7 @@ private:
 
 	double max_energy() const
 	{
-		return charge_neutral_fermi_level(p_) + 7 * p_.lattice_temp;
+		return charge_neutral_fermi_level(p_) + 7 * p_.temp;
 	}
 
 	virtual std::pair<double, double> eigen_values_range() const override
@@ -64,7 +65,7 @@ private:
 		const auto zs = [this](auto i) { return mesh().vertex(i).x(); };
 		const auto fn = [this, max_e](auto i) {
 			const auto e = max_e + phi_[i];
-			return e <= 0 ? 0 : std::sqrt(2 * p_.effective_mass * e);
+			return e <= 0 ? 0 : std::sqrt(2 * p_.m_eff * e);
 		};
 		const auto n_states = es_util::trapez_int(mesh().n_vertices(), zs, fn, 0.) / es_util::math::pi;
 
@@ -89,7 +90,7 @@ private:
 
 		const auto grads = es_fe::gradients<Element, Stiff_quadr>(es_fe::inv_jacobian(edge));
 		const auto stiffness_matrix =
-			es_fe::stiffness_matrix<Element, Stiff_quadr>(grads, length / (2 * p_.effective_mass));
+			es_fe::stiffness_matrix<Element, Stiff_quadr>(grads, length / (2 * p_.m_eff));
 
 		const auto dofs = system().dofs(edge);
 

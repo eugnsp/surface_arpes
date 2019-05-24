@@ -7,7 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS "-Wall -Wpedantic -Wextra -Werror=return-type -m64 -march=native -fmax-errors=5")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "-Wno-deprecated-declarations -O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-Wno-unused-parameter -Wno-deprecated-declarations -O3 -DNDEBUG")
 
 file(GLOB_RECURSE CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 add_executable(arpes "${CPP_FILES}")
@@ -20,4 +20,3 @@ target_link_libraries(arpes es_la)
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/external/es_fe")
 target_link_libraries(arpes es_fe)
-

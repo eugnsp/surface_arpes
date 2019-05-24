@@ -1,0 +1,41 @@
+## Physical system parameters
+# System length [nm]
+250
+# Number of mesh points
+1000
+# System temperature [K]
+10
+# Effective mass
+.2
+# Static dielectric permittivity
+10
+# Dopant concentration [cm^-3]
+7.7e19
+# Surface potential [eV]
+.7
+# Disorder broadening (Lorentz FWHM) [eV]
+.1
+
+## ARPES parameters
+# Instrumental energy broadening (Gauss FWHM) [eV]
+.075
+# Instrumental Kx broadening (Gauss FWHM) [Ang^-1]
+.015
+# Electron's mean free path [nm]
+5
+
+## ARPES image parameters
+# Minimum energy [eV]
+-.6
+# Maximum energy [eV]
+.4
+# Energy resolution
+1000
+
+# Maximum Kx [Ang^-1]
+.3
+# Kx resolution
+500
+
+# Maximum Kz [Ang^-1]
+.3

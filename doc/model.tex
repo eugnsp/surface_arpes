@@ -18,6 +18,7 @@
 \newcommand{\fL}{f_{\mathrm{L}}}
 \newcommand{\fG}{f_{\mathrm{G}}}
 \newcommand{\ii}{\mathrm{i}}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
 
 \begin{document}
 
@@ -28,8 +29,9 @@ surface layer (quasi-1D~model)}
 
 This document conains a succinct description of equations that are numerically solved
 in the code. No attempt has been made to present mathematically and/or physically
-rigorous derivations. Please see references for details.
+rigorous derivations.
 
+% =============================================================================
 \section{Quasi-classical problem}
 
 \subsection{Poisson equation}
@@ -138,6 +140,7 @@ and
 		\Big[ \sum_l \phi_{0l} \psi_l(z_k) \Big] \psi_i(z_k) \psi_j(z_k).
 \end{equation}
 
+% =============================================================================
 \section{Quantum problem}
 
 To account for quantum effects, we solve the Schr\"odinger and the Poisson
@@ -195,53 +198,101 @@ with
 \end{equation}
 where $B$ is positive-definite.
 
+% =============================================================================
 \section{ARPES signal calculation}
 
 The intensity of the ARPES signal at $k_y = 0$ is given by:
-\begin{multline}
-	I_0(E, k_x, k_z) \sim f_{\mathrm{FD}}\left[ \frac{E - F}{T} \right] \times\\
-		\times \sum_n f_{\mathrm{D}}\left[ E - E_n - \frac{k_x^2}{2m} \right]
-		\left\vert \int \dd z \, e^{-\ii k_z z - z / \lambda}
-		\psi_n(z) \right\vert^2,
-\end{multline}
-where the Lorentz distribution
+\begin{equation}
+	I^0(k_x, k_z, E) \sim f_{\mathrm{FD}}\left[ \frac{E - F}{T} \right]
+		\sum_n f_{\mathrm{D}}\left[ E - E_n - \frac{k_x^2}{2m} \right]
+		\abs{\varphi_n(k_z)}^2,
+\end{equation}
+where
+\begin{equation}
+	\varphi_n(k_z) = \int \dd z \, e^{-\ii k_z z - z / \lambda} \psi_n(z),
+\end{equation}
+and the Lorentz distribution
 \begin{equation}
 	f_{\mathrm{D}}(E) \sim \frac{1}{1 + (E / \delta_D E)^2}
 \end{equation}
 accounts for disorder.
 
-If $\phi(z) = 0$, in the limit $L \to \infty$:
+If $\phi(z) = 0$, in the limit $L \to \infty$ and $\lambda \to \infty$ we
+recover a broadened parabolic spectrum:
 \begin{equation}
-	I_0(E, k_x, k_z) \sim f_{\mathrm{FD}}\left[ \frac{E - F}{T} \right]
-		\int \dd k_z' \, f_{\mathrm{D}}\left[ E - \frac{k_x^2 + k_z'^2}{2m} \right]
-		\frac{1}{1 + [\lambda (k_z - k_z')]^2}.
-\end{equation}
-
-In the limit $\lambda \to \infty$ we recover a broadened parabolic spectrum:
-\begin{equation}
-	I_0(E, k_x, k_z) \sim f_{\mathrm{FD}}\left[ \frac{E - F}{T} \right]
+	I^0(E, k_x, k_z) \sim f_{\mathrm{FD}}\left[ \frac{E - F}{T} \right]
 		f_{\mathrm{D}}\left[ E - \frac{k_x^2 + k_z^2}{2m} \right].
 \end{equation}
 
-At $k_z = 0$ we have:
+To account for instrumental broadenings, we futher convolve $I_0(k_x, k_z, E)$
+with two normal distributions (broadening over $k_z$ is assumed to be negligible)
 \begin{equation}
-	I_0(E, k_x) \sim f_{\mathrm{FD}}\left[ \frac{E - F}{T} \right] \sum_n
-		f_{\mathrm{D}}\left[ E - E_n - \frac{k_x^2}{2m} \right]
-		\left[ \int \dd z \, e^{- z / \lambda}
-		\psi_n(z) \right]^2.
-\end{equation}
-
-To account for apparatus broadenings, we futher convolve $I_0(E, k_x)$ with
-two normal distributions
-\begin{equation}
-	f_A(E) \sim \exp\left[ -\frac{E^2}{2(\delta_A E)^2} \right], \quad
 	f_A(k) \sim \exp\left[ -\frac{k^2}{2(\delta_A k)^2} \right]
+	\quad \text{and} \quad
+	f_A(E) \sim \exp\left[ -\frac{E^2}{2(\delta_A E)^2} \right]
 \end{equation}
 to obtain the final result:
 \begin{multline}
-	I(E, k_x) \sim I_0(E, k_x) \star (f_A(E) \otimes f_A(k_x)) \sim \\
-	\sim \int \dd k_x' \dd E' \, f_A(E') f_A(k_x') I_0(E - E', k_x - k_x').
+	I(k_x, k_z, E) \sim I^0(k_x, k_z, E) \star (f_A(k_x) \otimes \delta(k_z)
+	\otimes f_A(E)) \sim \\
+	\sim \int \dd k_x' \, \dd E' \, I^0(k_x - k_x', k_z, E - E') f_A(k_x') f_A(E').
 \end{multline}
+
+Let's introduce a partial intensity function
+\begin{equation}
+	I_n^0(k_x, E) \sim f_{\mathrm{FD}}\left[ \frac{E - F}{T} \right]
+		f_{\mathrm{D}}\left[ E - E_n - \frac{k_x^2}{2m} \right]
+\end{equation}
+and its convolution
+\begin{equation}
+	I_n(k_x, E) \sim \int \dd k_x' \, \dd E' \, I_n^0(k_x - k_x', E - E')
+		f_A(k_x') f_A(E').
+\end{equation}
+
+Then $I(k_x, k_z, E)$ can be written as
+\begin{equation}
+	I(k_x, k_z, E) \sim \sum_n I_n(k_x, E) \abs{\varphi_n(k_z)}^2.
+\end{equation}
+
+We want to compute three types of spectra: $I(k_x, 0, E)$, $I(0, k_z, E)$,
+and $I(k_x, k_z, F)$.
+
+\textbf{1.} At $k_z = 0$ we have:
+\begin{equation}
+	I(k_x, E) \sim \sum_n I_n(k_x, E) \abs{\varphi_n(0)}^2.
+\end{equation}
+
+\textbf{2.} At $E = F$ we have:
+\begin{equation}
+	I(k_x, k_z) \sim \sum_n I_n(k_x, F) \abs{\varphi_n(k_z)}^2.
+\end{equation}
+
+% \begin{multline}
+% 	I(k_x, k_z) \sim \sum_n \abs{\varphi_n(k_z)}^2 \int \dd E' \,
+% 		f_{\mathrm{FD}}\left[ -\frac{E'}{T} \right] f_A(E') \times \\
+% 		\times \int \dd k_x' \,
+% 		f_{\mathrm{D}}\left[ F - E' - E_n - \frac{(k_x - k_x')^2}{2m} \right] f_A(k_x').
+% \end{multline}
+
+% \begin{multline}
+% 	I(k_x, k_z) \sim \int \dd k_x' \, f_A(k_x') \int \dd E' \,
+% 		f_{\mathrm{FD}}\left[ -\frac{E'}{T} \right] f_A(E') \times \\
+% 		\times \sum_n
+% 		f_{\mathrm{D}}\left[ F - E' - E_n - \frac{(k_x - k_x')^2}{2m} \right] \abs{\varphi_n(k_z)}^2.
+% \end{multline}
+
+\textbf{3.} At $k_x = 0$ we have:
+\begin{equation}
+	I(k_z, E) \sim \sum_n I_n(0, E) \abs{\varphi_n(k_z)}^2.
+\end{equation}
+
+
+% \begin{multline}
+% 	I(k_z, E) \sim \sum_n \abs{\varphi_n(k_z)}^2 \int \dd k_x' f_A(k_x') \times\\
+% 		\times \int \dd E' \, f_{\mathrm{FD}}\left[ \frac{E - E' - F}{T} \right]
+% 		f_{\mathrm{D}}\left[ E - E' - E_n - \frac{k_x'^2}{2m} \right] f_A(E').
+% \end{multline}
+
 
 % The single-particle density of a filled state at
 % fixed depth~$z$ and fixed momentum $k_y = 0$ is given by the product

@@ -22,6 +22,6 @@ public:
 
 	virtual std::string name() const override
 	{
-		return "1D Poisson solver";
+		return "1D Poisson equation";
 	}
 };

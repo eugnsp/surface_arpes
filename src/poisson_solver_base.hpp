@@ -65,7 +65,7 @@ private:
 	{
 		system().variable().bnd_cond<0>().set_value(-p_.ec_surf);
 
-		std::cout << "Non-linear Poisson solver\n"
+		std::cout << system().name() << " non-linear solver\n"
 					 "-------------------------------------\n"
 					 "#    |residual|     |step|/|solution|\n"
 					 "-------------------------------------"
@@ -82,5 +82,5 @@ protected:
 	using Base::matrix_;
 	using Base::solution_;
 
-	const Params p_;
+	const Params& p_;
 };

@@ -2,6 +2,7 @@
 #include "params.hpp"
 #include "poisson_solver_base.hpp"
 #include "schrodinger_solver_base.hpp"
+#include "tools.hpp"
 
 #include <es_la/dense.hpp>
 #include <es_util/numeric.hpp>
@@ -54,13 +55,13 @@ public:
 				// Note: eigenvectors are normalized with respect to the scalar product
 				// <f | g> = <f| B |g>, for the eigenproblem A |f> = lambda B |f>.
 
-				const auto z = (-energy + dphis[iq] + fermi_level_) / params_.lattice_temp;
+				const auto z = (-energy + dphis[iq] + fermi_level_) / params_.temp;
 				const auto f = es_util::ln_one_p_exp(z);
 				const auto fd = es_util::fermi(-z);
 				const auto psi_sq = es_util::sq(psis[iq]);
 
 				density[iq].first -= effective_dos_ * psi_sq * f;
-				density[iq].second -= effective_dos_ / params_.lattice_temp * psi_sq * fd;
+				density[iq].second -= effective_dos_ / params_.temp * psi_sq * fd;
 			}
 		}
 
@@ -71,7 +72,7 @@ public:
 	}
 
 private:
-	const Params params_;
+	const Params& params_;
 	double effective_dos_;
 	double fermi_level_;
 
