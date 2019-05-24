@@ -60,7 +60,7 @@ git clone --recursive https://github.com/eugnsp/surface_arpes.git
 cd surface_arpes
 mkdir build
 cd build
-cmake .. && make
+cmake -DCMAKE_BUILD_TYPE=RELEASE .. && make
 
 ./arpes < ../example/accum1.txt
 ../plot/plot_all.sh
