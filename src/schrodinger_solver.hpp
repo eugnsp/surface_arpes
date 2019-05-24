@@ -4,26 +4,19 @@
 #include "schrodinger_solver_base.hpp"
 #include "tools.hpp"
 
-#include <es_fe/dof/tools.hpp>
 #include <es_fe/geometry.hpp>
-#include <es_fe/io/matlab_writer1.hpp>
 #include <es_fe/math.hpp>
-#include <es_fe/matrix_based/eigen_solver.hpp>
 #include <es_fe/mesh/mesh1.hpp>
-#include <es_fe/var_list.hpp>
 #include <es_la/dense.hpp>
 #include <es_la/sparse.hpp>
+#include <es_la/io.hpp>
 #include <es_util/algorithm.hpp>
 #include <es_util/numeric.hpp>
-#include <es_util/phys.hpp>
 
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <string>
-#include <vector>
-
-#include <iostream>
 
 class Schrodinger_solver final : public Schrodinger_solver_base
 {

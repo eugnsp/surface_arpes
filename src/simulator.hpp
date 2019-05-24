@@ -32,7 +32,7 @@ public:
 		//* Parameters */
 
 		const auto p = read_input(std::cin);
-		// std::ifstream config("depl.txt");
+		// std::ifstream config("input.txt");
 		// const auto p = read_input(config);
 
 		es_fe::Linear_grid grid;
@@ -42,8 +42,7 @@ public:
 		///////////////////////////////////////////////////////////////////////
 		//* Quasi-classical solution */
 
-		const auto x_grid = grid.grid();
-		es_fe::Mesh1 mesh(x_grid);
+		es_fe::Mesh1 mesh(grid.grid());
 
 		Poisson_solver<Classical_density_predictor> cl_solver(mesh, p);
 		cl_solver.init();
@@ -100,7 +99,7 @@ public:
 		es_la::Matrix_xd arp_e_kz(p.ne, nkz_f, 0);
 
 		const auto fermi = charge_neutral_fermi_level(p);
-		const auto ie_fermi = static_cast<std::size_t>((fermi - es[0]) / (es[1] - es[0]));
+		const auto ie_fermi = static_cast<std::size_t>(std::round((fermi - es[0]) / (es[1] - es[0])));
 		if (ie_fermi >= p.ne)
 			throw std::runtime_error("Fermi level is outside the specified energy range");
 
