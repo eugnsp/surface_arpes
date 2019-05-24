@@ -22,7 +22,7 @@
 # Instrumental Kx broadening (Gauss FWHM) [Ang^-1]
 .015
 # Electron's mean free path [nm]
-5
+4
 
 ## ARPES image parameters
 # Minimum energy [eV]

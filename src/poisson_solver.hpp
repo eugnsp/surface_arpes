@@ -6,7 +6,6 @@
 #include <es_fe/io/matlab_writer1.hpp>
 #include <es_fe/math.hpp>
 #include <es_fe/mesh/mesh1.hpp>
-#include <es_fe/var_list.hpp>
 #include <es_la/dense.hpp>
 #include <es_la/sparse.hpp>
 #include <es_util/algorithm.hpp>
@@ -17,9 +16,6 @@
 #include <cmath>
 #include <cstddef>
 #include <string>
-#include <vector>
-
-#include <iostream>
 
 template<class Density_predictor>
 class Poisson_solver final : public Poisson_solver_base
@@ -61,7 +57,7 @@ private:
 
 	void assemble_on_edge(const es_fe::Mesh1::Edge_view& edge)
 	{
-		const auto eps = this->p_.eps;
+		const auto eps = p_.eps;
 		const auto length = es_fe::length(edge);
 
 		using Stiff_quadr = es_fe::Quadr<2 * (Element::order - 1), 1>;
@@ -115,8 +111,7 @@ public:
 		{
 			System::template Var_vertex_dofs<0> vertex_dofs;
 			system().dof_mapper().template vertex_dofs<0>(vertex, vertex_dofs);
-			ec[*vertex] = -es_util::au::to_volt(solution_[vertex_dofs[0].index]);
-			// ec[*vertex] = -solution_[vertex_dofs[0].index];
+			ec[*vertex] = -es_util::au::to_evolt(solution_[vertex_dofs[0].index]);
 			// n[*vertex] = es_util::au::to_per_cm3(density_predictor_.get2(vertex));
 		}
 
@@ -135,8 +130,7 @@ public:
 		m.write_vertex_field("n", n);
 
 		const auto fermi_level = charge_neutral_fermi_level(p_);
-		//		m.write_scalar("f", es_util::au::to_volt(fermi_level));
-		m.write_scalar("f", fermi_level);
+		m.write_scalar("f", es_util::au::to_evolt(fermi_level));
 	}
 
 private:

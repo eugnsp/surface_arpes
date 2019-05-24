@@ -4,8 +4,8 @@ set terminal pngcairo size 1000,800
 set output 'arpes_kx_kz.png'
 set pm3d map
 set title "ARPES spectrum"
-set xlabel "k_x [Ang^{-1}]"
-set ylabel "k_z [Ang^{-1}]"
+set xlabel "k_x [Å^{-1}]"
+set ylabel "k_z [Å^{-1}]"
 set cbrange [0:]
 set autoscale fix
 unset cbtics

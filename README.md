@@ -29,6 +29,12 @@ It can easily be overcome, if need be.
 All images below are presented for exposition only, no attempt has been
 made here to fit any experimental data.
 
+Depletion layer (no bound states):
+
+![Depletion layer](example/depl_sm.png)
+
+([Large image](example/depl.png))
+
 Accumulation layer with one bound state:
 
 ![Accumulation layer with one bound state](example/accum1_sm.png)
@@ -41,12 +47,6 @@ Accumulation layer with two bound states:
 
 ([Large image](example/accum2.png))
 
-Depletion layer (no bound states):
-
-![Depletion layer](example/depl_sm.png)
-
-([Large image](example/depl.png))
-
 ## How to run
 
 Set `MKLROOT` environment variable to point to the MKL installation directory.
@@ -55,8 +55,7 @@ Then:
 ```sh
 git clone --recursive https://github.com/eugnsp/surface_arpes.git
 cd surface_arpes
-mkdir build
-cd build
+mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=RELEASE .. && make
 
 ./arpes < ../example/accum1.txt
