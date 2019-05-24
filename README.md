@@ -41,16 +41,13 @@ Accumulation layer with two bound states:
 
 ([Large image](example/accum2.png))
 
-Depletion layer:
+Depletion layer (no bound states):
 
 ![Depletion layer](example/depl_sm.png)
 
 ([Large image](example/depl.png))
 
 ## How to run
-
-**NB**: this code is under development, and is not a ready-to-use tool for an
-end-user.
 
 Set `MKLROOT` environment variable to point to the MKL installation directory.
 Then:

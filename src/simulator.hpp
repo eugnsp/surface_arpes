@@ -60,7 +60,7 @@ public:
 		q_solver.density_predictor().set_schrodinger_view(schrod_solver.solution_view());
 
 		schrod_solver.init();
-		for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < 7; ++i)
 		{
 			schrod_solver.solve();
 			q_solver.solve();
