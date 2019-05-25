@@ -13,7 +13,7 @@
 {
 	Params p;
 
-	const unsigned int n_params = 17;
+	const unsigned int n_params = 19;
 	unsigned int i = 0;
 
 	std::string str;
@@ -59,38 +59,46 @@
 				break;
 
 			case 8:
-				p.de_inst = from_gauss_fwhm(es_util::au::from_evolt(d));
+				p.n_max_iters = static_cast<std::size_t>(d);
 				break;
 
 			case 9:
-				p.dkx_inst = from_gauss_fwhm(es_util::au::from_per_ang(d));
+				p.stop_ec_sup_norm = es_util::au::from_evolt(d);
 				break;
 
 			case 10:
-				p.mfp = es_util::au::from_nm(d);
+				p.de_inst = from_gauss_fwhm(es_util::au::from_evolt(d));
 				break;
 
 			case 11:
-				p.e_min = es_util::au::from_evolt(d);
+				p.dkx_inst = from_gauss_fwhm(es_util::au::from_per_ang(d));
 				break;
 
 			case 12:
-				p.e_max = es_util::au::from_evolt(d);
+				p.mfp = es_util::au::from_nm(d);
 				break;
 
 			case 13:
-				p.ne = static_cast<std::size_t>(d);
+				p.e_min = es_util::au::from_evolt(d);
 				break;
 
 			case 14:
-				p.kx_max = es_util::au::from_per_ang(d);
+				p.e_max = es_util::au::from_evolt(d);
 				break;
 
 			case 15:
-				p.nkx = static_cast<std::size_t>(d);
+				p.ne = static_cast<std::size_t>(d);
 				break;
 
 			case 16:
+				p.kx_max = es_util::au::from_per_ang(d);
+				break;
+
+			case 17:
+				p.nkx = static_cast<std::size_t>(d);
+				break;
+
+			case 18:
 				p.kz_max = es_util::au::from_per_ang(d);
 				break;
 			}

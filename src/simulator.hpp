@@ -14,6 +14,7 @@
 #include <es_la/dense.hpp>
 #include <es_la/io.hpp>
 #include <es_util/numeric.hpp>
+#include <es_util/phys.hpp>
 
 #include <cassert>
 #include <cmath>
@@ -60,10 +61,19 @@ public:
 		q_solver.density_predictor().set_schrodinger_view(schrod_solver.solution_view());
 
 		schrod_solver.init();
-		for (int i = 0; i < 7; ++i)
+		for (std::size_t i = 0;;)
 		{
 			schrod_solver.solve();
 			q_solver.solve();
+
+			auto sup_norm = q_solver.density_predictor().potential_change_sup_norm();
+			std::cout << i + 1 << ". Potential change |phi - phi_prev|_sup = " << es_util::au::to_evolt(sup_norm)
+					  << " eV" << std::endl;
+
+			if (sup_norm < p.stop_ec_sup_norm)
+				break;
+			if (++i >= p.n_max_iters)
+				throw std::runtime_error("No convergence in the Poisson-Schrodinger solver");
 		}
 		q_solver.write("poisson_q.mat");
 

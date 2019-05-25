@@ -65,6 +65,7 @@ cmake -DCMAKE_BUILD_TYPE=RELEASE .. && make
 ## References
 
 1. V.N.Strocov. *Photoemission response of 2D states.*\
+[J. Electron. Spectrosc. **229**, 100 (2018)](https://doi.org/10.1016/j.elspec.2018.09.001),
 [arXiv preprint (2018)](https://arxiv.org/abs/1801.07505).
 2. S.Moser et al. *How to extract the surface potential profile
 from the ARPES signature of a 2DEG.*\

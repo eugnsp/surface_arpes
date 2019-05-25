@@ -71,6 +71,11 @@ public:
 		return density;
 	}
 
+	double potential_change_sup_norm() const
+	{
+		return es_la::norm_sup(phi_.values() - prev_phi_.values());
+	}
+
 private:
 	const Params& params_;
 	double effective_dos_;

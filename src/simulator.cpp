@@ -1,7 +1,5 @@
 #include "simulator.hpp"
 
-#include <mkl_service.h>
-
 #include <cstdlib>
 #include <exception>
 #include <iostream>
@@ -16,7 +14,6 @@ int main(int argc, const char** argv)
 
 		Simulator sim;
 		sim.run(argc, argv);
-		::mkl_free_buffers();
 	}
 	catch (const std::exception& e)
 	{

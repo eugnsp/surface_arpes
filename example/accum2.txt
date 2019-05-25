@@ -16,6 +16,11 @@
 # Disorder broadening (Lorentz FWHM) [eV]
 .1
 
+# Poisson-Schrodinger solver max. iterations
+10
+# Poisson-Schrodinger solver stopping criterion [eV]
+1e-6
+
 ## ARPES parameters
 # Instrumental energy broadening (Gauss FWHM) [eV]
 .075
