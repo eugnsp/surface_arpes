@@ -61,7 +61,7 @@ private:
 		});
 	}
 
-	virtual void before_solve()
+	virtual void before_solve() override
 	{
 		system().variable().bnd_cond<0>().set_value(-p_.ec_surf);
 
