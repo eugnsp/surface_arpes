@@ -49,8 +49,8 @@ Accumulation layer with two bound states:
 
 ## How to run
 
-Set `MKLROOT` environment variable to point to the MKL installation directory.
-Then:
+Set `MKLROOT` environment variable to point to the MKL installation directory,
+and be sure that your CMake version is >= 3.13. Then:
 
 ```sh
 git clone --recursive https://github.com/eugnsp/surface_arpes.git

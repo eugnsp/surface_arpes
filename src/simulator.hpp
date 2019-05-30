@@ -41,6 +41,29 @@ public:
 		grid.add_tick(p.nx - 1, p.length);
 
 		///////////////////////////////////////////////////////////////////////
+		//* Running Poisson-Schrodinger solver */
+
+		const auto fermi = charge_neutral_fermi_level(p);
+
+		std::cout << "----------------------------------------------\n"
+				  << "Running Poisson-Schrodinger solver\n"
+				  << std::endl;
+
+		std::cout << "System length: L = " << es_util::au::to_nm(p.length) << " nm\n"
+				  << "Temperature: T = " << es_util::au::to_kelvin(p.temp) << " K\n"
+				  << "Effective mass: m_eff = " << p.m_eff << "\n"
+				  << "Static dielectric permittivity: eps = " << p.eps << "\n"
+				  << "Dopant concentration: N_d = " << es_util::au::to_per_cm3(p.dopant_conc) << " cm^-3\n"
+				  << "Surface potential: Ec(0) = " << es_util::au::to_evolt(p.ec_surf) << " eV\n"
+				  << "Disorder strength: gamma_D = " << es_util::au::to_evolt(p.gamma_disorder) << " eV\n"
+				  << "Fermi level: F = " << es_util::au::to_evolt(fermi) << " eV\n"
+				  << "Number of potential mesh points: N_x = " << p.nx << "\n"
+				  << "Poisson-Schrodinger solver maximum number of iterations: N_max = " << p.n_max_iters << "\n"
+				  << "Poisson-Schrodinger solver stopping criterion: |phi - phi_prev|_s < "
+				  << es_util::au::to_evolt(p.stop_ec_sup_norm) << " eV\n"
+				  << std::endl;
+
+		///////////////////////////////////////////////////////////////////////
 		//* Quasi-classical solution */
 
 		es_fe::Mesh1 mesh(grid.grid());
@@ -67,7 +90,7 @@ public:
 			q_solver.solve();
 
 			auto sup_norm = q_solver.density_predictor().potential_change_sup_norm();
-			std::cout << i + 1 << ". Potential change |phi - phi_prev|_sup = " << es_util::au::to_evolt(sup_norm)
+			std::cout << i + 1 << ". Potential change |phi - phi_prev|_s = " << es_util::au::to_evolt(sup_norm)
 					  << " eV" << std::endl;
 
 			if (sup_norm < p.stop_ec_sup_norm)
@@ -79,6 +102,10 @@ public:
 
 		//////////////////////////////////////////////////////////////////////
 		//* Calculation of ARPES spetrum */
+
+		std::cout << "----------------------------------------------\n"
+				  << "Running ARPES spectrum calculator\n"
+				  << std::endl;
 
 		const auto psi = schrod_solver.solution_view();
 		es_la::Matrix_xd psi_z(*mesh.n_vertices(), psi.size());
@@ -104,11 +131,29 @@ public:
 		const auto kzs = es_util::Linear_grid<double>::from_min_step(0, dkz, nkz);
 		const auto es = es_util::Linear_grid<double>::from_min_max(p.e_min, p.e_max, p.ne);
 
+		//////////////////////////////////////////////////////////////////////
+
+		std::cout << "Instrumental energy broadening: sigma_E = " << es_util::au::to_evolt(p.sigma_e_inst) << " eV\n"
+				  << "Instrumental Kx broadening: sigma_Kx = " << es_util::au::to_per_ang(p.sigma_kx_inst) << " Ang^-1\n"
+				  << "Electron's mean free path: lambda = " << es_util::au::to_nm(p.mfp) << " nm\n"
+				  << "Minimum energy: E_min = " << es_util::au::to_evolt(p.e_min) << " eV\n"
+				  << "Maximum energy: E_max = " << es_util::au::to_evolt(p.e_max) << " eV\n"
+				  << "Energy resolution: N_E = " << p.ne << "\n"
+				  << "Energy resolution: delta_E = " << es_util::au::to_evolt((p.e_max - p.e_min) / p.ne) << " eV\n"
+				  << "Maximum Kx: Kx_max = " << es_util::au::to_per_ang(p.kx_max) << " Ang^-1\n"
+				  << "Kx mesh size: N_Kx = " << nkx_f << "\n"
+				  << "Kx resolution: delta_Kx = " << es_util::au::to_per_ang(p.kx_max / p.nkx) << " Ang^-1\n"
+				  << "Maximum Kz: Kz_max = " << es_util::au::to_per_ang(kzs.back()) << " Ang^-1\n"
+				  << "Kz mesh size: N_Kz = " << nkz_f << "\n"
+				  << "Kz resolution: delta_Kz = " << es_util::au::to_per_ang(dkz) << " Ang^-1\n"
+				  << std::endl;
+
+		//////////////////////////////////////////////////////////////////////
+
 		es_la::Matrix_xd arp_kx_e(nkx_f, p.ne, 0);
 		es_la::Matrix_xd arp_kx_kz(nkx_f, nkz_f, 0);
 		es_la::Matrix_xd arp_e_kz(p.ne, nkz_f, 0);
 
-		const auto fermi = charge_neutral_fermi_level(p);
 		const auto ie_fermi = static_cast<std::size_t>(std::round((fermi - es[0]) / (es[1] - es[0])));
 		if (ie_fermi >= p.ne)
 			throw std::runtime_error("Fermi level is outside the specified energy range");
@@ -123,13 +168,13 @@ public:
 				{
 					const auto k_sq_over_2m = es_util::sq(kxs[ikx]) / (2 * p.m_eff);
 					const auto e = es[ie] - (psi[ip] + k_sq_over_2m);
-					const auto f_d = 1 / (1 + es_util::sq(e / p.de_disorder));
+					const auto f_d = 1 / (1 + es_util::sq(e / p.gamma_disorder));
 					arp_n(ikx_max + ikx, ie) = arp_n(ikx_max - ikx, ie) = f_d * f_fd;
 				}
 			}
 
-			gauss_cols_convolution(arp_n, p.dkx_inst / (2 * p.kx_max));
-			gauss_rows_convolution(arp_n, p.de_inst / (p.e_max - p.e_min));
+			gauss_cols_convolution(arp_n, p.sigma_kx_inst / (2 * p.kx_max));
+			gauss_rows_convolution(arp_n, p.sigma_e_inst / (p.e_max - p.e_min));
 
 			const auto psi_k0_sq = std::norm(psi_k(0, ip));
 			for (std::size_t ie = 0; ie < p.ne; ++ie)
@@ -163,9 +208,9 @@ public:
 		mat.write("kx_max", es_util::au::to_per_ang(p.kx_max));
 		mat.write("kz_max", es_util::au::to_per_ang(kzs.back()));
 
-		mat.write("de_disorder", es_util::au::to_evolt(p.de_disorder));
-		mat.write("de_inst", es_util::au::to_evolt(p.de_inst));
-		mat.write("dkx_inst", es_util::au::to_per_ang(p.dkx_inst));
+		mat.write("gamma_disorder", es_util::au::to_evolt(p.gamma_disorder));
+		mat.write("sigma_e_inst", es_util::au::to_evolt(p.sigma_e_inst));
+		mat.write("sigma_kx_inst", es_util::au::to_per_ang(p.sigma_kx_inst));
 
 		mat.write("mfp", es_util::au::to_nm(p.mfp));
 

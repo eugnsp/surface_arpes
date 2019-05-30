@@ -1,8 +1,6 @@
 ## Physical system parameters
 # System length [nm]
-250
-# Number of mesh points
-1000
+300
 # System temperature [K]
 10
 # Effective mass
@@ -16,6 +14,8 @@
 # Disorder broadening (Lorentz FWHM) [eV]
 .1
 
+# Number of potential mesh points
+1000
 # Poisson-Schrodinger solver max. iterations
 10
 # Poisson-Schrodinger solver stopping criterion [eV]
@@ -35,12 +35,12 @@
 # Maximum energy [eV]
 .4
 # Energy resolution
-1000
+500
 
 # Maximum Kx [Ang^-1]
 .3
 # Kx resolution
-500
+250
 
 # Maximum Kz [Ang^-1]
 .3

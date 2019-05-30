@@ -31,31 +31,31 @@
 				break;
 
 			case 1:
-				p.nx = static_cast<std::size_t>(d);
-				break;
-
-			case 2:
 				p.temp = es_util::au::from_kelvin(d);
 				break;
 
-			case 3:
+			case 2:
 				p.m_eff = d;
 				break;
 
-			case 4:
+			case 3:
 				p.eps = d;
 				break;
 
-			case 5:
+			case 4:
 				p.dopant_conc = es_util::au::from_per_cm3(d);
 				break;
 
-			case 6:
+			case 5:
 				p.ec_surf = es_util::au::from_evolt(d);
 				break;
 
+			case 6:
+				p.gamma_disorder = from_lorentz_fwhm(es_util::au::from_evolt(d));
+				break;
+
 			case 7:
-				p.de_disorder = from_lorentz_fwhm(es_util::au::from_evolt(d));
+				p.nx = static_cast<std::size_t>(d);
 				break;
 
 			case 8:
@@ -67,11 +67,11 @@
 				break;
 
 			case 10:
-				p.de_inst = from_gauss_fwhm(es_util::au::from_evolt(d));
+				p.sigma_e_inst = from_gauss_fwhm(es_util::au::from_evolt(d));
 				break;
 
 			case 11:
-				p.dkx_inst = from_gauss_fwhm(es_util::au::from_per_ang(d));
+				p.sigma_kx_inst = from_gauss_fwhm(es_util::au::from_per_ang(d));
 				break;
 
 			case 12:

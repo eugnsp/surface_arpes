@@ -7,14 +7,12 @@
 #include <complex>
 #include <stdexcept>
 
-#define CALL_MKL_DFTI(fn, ...)                                                                                          \
+#define CALL_MKL_DFTI(fn, ...)                                                                                         \
 	do                                                                                                                 \
 	{                                                                                                                  \
 		const auto status = fn(__VA_ARGS__);                                                                           \
 		if (status != 0)                                                                                               \
-		{                                                                                                              \
 			throw std::runtime_error(::DftiErrorMessage(status));                                                      \
-		}                                                                                                              \
 	} while (0)
 
 es_la::Matrix_x<std::complex<double>> fft_1d_cols_real_to_half_complex(const es_la::Matrix_xd& in)

@@ -11,13 +11,13 @@ struct Params
 	double m_eff;
 	double dopant_conc;
 	double ec_surf;
-	double de_disorder;
+	double gamma_disorder;
 
 	std::size_t n_max_iters;
 	double stop_ec_sup_norm;
 
-	double de_inst;
-	double dkx_inst;
+	double sigma_e_inst;
+	double sigma_kx_inst;
 	double mfp;
 
 	double e_min;
