@@ -15,7 +15,7 @@
 			throw std::runtime_error(::DftiErrorMessage(status));                                                      \
 	} while (0)
 
-es_la::Matrix_x<std::complex<double>> fft_1d_cols_real_to_half_complex(const es_la::Matrix_xd& in)
+inline es_la::Matrix_x<std::complex<double>> fft_1d_cols_real_to_half_complex(const es_la::Matrix_xd& in)
 {
 	const auto fft_size = in.rows() / 2 + 1;
 	es_la::Matrix_x<std::complex<double>> out(fft_size, in.cols());

@@ -6,7 +6,7 @@
 #include <cmath>
 #include <cstddef>
 
-es_la::Vector_xd gauss_distribution(const std::size_t n, const double alpha)
+inline es_la::Vector_xd gauss_distribution(const std::size_t n, const double alpha)
 {
 	es_la::Vector_xd vec(n);
 
@@ -21,13 +21,13 @@ es_la::Vector_xd gauss_distribution(const std::size_t n, const double alpha)
 	return vec;
 }
 
-void gauss_cols_convolution(es_la::Matrix_xd& y, const double alpha)
+inline void gauss_cols_convolution(es_la::Matrix_xd& y, const double alpha)
 {
 	const auto x = gauss_distribution(y.rows(), alpha);
 	es_la::cols_convolution(x, y, y.rows() / 2);
 }
 
-void gauss_rows_convolution(es_la::Matrix_xd& y, const double alpha)
+inline void gauss_rows_convolution(es_la::Matrix_xd& y, const double alpha)
 {
 	const auto x = gauss_distribution(y.cols(), alpha);
 	es_la::rows_convolution(x, y, y.cols() / 2);

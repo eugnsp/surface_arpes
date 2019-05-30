@@ -8,8 +8,8 @@
 #include <es_fe/math.hpp>
 #include <es_fe/mesh/mesh1.hpp>
 #include <es_la/dense.hpp>
-#include <es_la/sparse.hpp>
 #include <es_la/io.hpp>
+#include <es_la/sparse.hpp>
 #include <es_util/algorithm.hpp>
 #include <es_util/numeric.hpp>
 
@@ -60,9 +60,9 @@ private:
 			const auto e = max_e + phi_[i];
 			return e <= 0 ? 0 : std::sqrt(2 * p_.m_eff * e);
 		};
-		const auto n_states = es_util::trapez_int(mesh().n_vertices(), zs, fn, 0.) / es_util::math::pi;
 
-		return static_cast<unsigned int>(std::ceil(n_states));
+		const auto n_states = es_util::trapez_int(mesh().n_vertices(), zs, fn, 0.) / es_util::math::pi;
+		return static_cast<std::size_t>(std::ceil(n_states));
 	}
 
 	virtual void assemble() override
@@ -76,30 +76,25 @@ private:
 
 	void assemble_on_edge(const es_fe::Mesh1::Edge_view& edge)
 	{
-		const auto length = es_fe::length(edge);
-
 		using Stiff_quadr = es_fe::Quadr<2 * (Element::order - 1), 1>;
 		using Mass_quadr = es_fe::Quadr<2 * Element::order, 1>;
 
 		const auto grads = es_fe::gradients<Element, Stiff_quadr>(es_fe::inv_jacobian(edge));
-		const auto stiffness_matrix =
-			es_fe::stiffness_matrix<Element, Stiff_quadr>(grads, length / (2 * p_.m_eff));
+		const auto stiffness_matrix = es_fe::stiffness_matrix<Element, Stiff_quadr>(grads, 1 / (2 * p_.m_eff));
+		const auto mass_matrix = es_fe::mass_matrix<Element, Mass_quadr>();
+		const auto potential_matrix =
+			es_fe::mass_matrix<Element, Mass_quadr>(es_fe::at_quadr<Mass_quadr>(phi_, edge));
 
+		const auto length = es_fe::length(edge);
 		const auto dofs = system().dofs(edge);
-
-		const auto mass_matrix = es_fe::mass_matrix<Element, Mass_quadr>(length);
-		const auto potential_matrix = es_fe::mass_matrix<Element, Mass_quadr>(
-			[this, &edge](auto q) { return phi_.template get<Element, Mass_quadr>(q, edge); }, -length);
-
 		for (es_fe::Local_index c = 0; c < dofs.size(); ++c)
 			if (dofs[c].is_free)
 				for (es_fe::Local_index r = 0; r <= c; ++r)
 					if (dofs[r].is_free)
 					{
 						const auto [ir, ic] = es_util::sorted(dofs[r].index, dofs[c].index);
-
-						matrix_a_(ir, ic) += stiffness_matrix(r, c) + potential_matrix(r, c);
-						matrix_b_(ir, ic) += mass_matrix(r, c);
+						matrix_a_(ir, ic) += length * (stiffness_matrix(r, c) - potential_matrix(r, c));
+						matrix_b_(ir, ic) += length * mass_matrix(r, c);
 					}
 	}
 

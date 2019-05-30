@@ -67,7 +67,7 @@ private:
 		const auto stiffness_matrix = es_fe::stiffness_matrix<Element, Stiff_quadr>(grads, length * eps);
 
 		const auto dofs = system().dofs(edge);
-		const auto density = density_predictor_.template get<Element, Mass_quadr>(dofs, edge);
+		const auto density = density_predictor_.template get<Mass_quadr>(dofs, edge);
 
 		const auto mass_matrix = es_fe::mass_matrix<Element, Mass_quadr>(
 			[&density](auto q) { return density[q].second; }, es_util::math::four_pi * length);
@@ -120,7 +120,7 @@ public:
 			using Quadr = es_fe::Quadr<1, 1>;
 
 			const auto dofs = system().dofs(edge);
-			const auto density = density_predictor_.template get<Element, Quadr>(dofs, edge);
+			const auto density = density_predictor_.template get<Quadr>(dofs, edge);
 
 			n[**edge] = es_util::au::to_per_cm3(density[0].first);
 		}

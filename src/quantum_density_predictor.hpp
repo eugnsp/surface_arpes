@@ -37,18 +37,18 @@ public:
 		psi_ = std::make_unique<Schrodinger_solution_view>(psi);
 	}
 
-	template<class Element, class Quadr, class Dofs>
+	template<class Quadr, class Dofs>
 	auto get(const Dofs& dofs, const es_fe::Mesh1::Edge_view& edge) const
 	{
 		es_la::Vector<std::pair<double, double>, Quadr::size> density{};
-		const auto phis = es_fe::at_quadr<Element, Quadr>(phi_, dofs);
-		const auto prev_phis = es_fe::at_quadr<Element, Quadr>(prev_phi_, dofs);
+		const auto phis = es_fe::at_quadr<Quadr>(phi_, dofs);
+		const auto prev_phis = es_fe::at_quadr<Quadr>(prev_phi_, dofs);
 		const auto dphis = (phis - prev_phis).eval();
 
 		for (std::size_t is = 0; is < psi_->size(); ++is)
 		{
 			const auto energy = (*psi_)[is];
-			const auto psis = es_fe::at_quadr<Element, Quadr>(*psi_, is, edge);
+			const auto psis = es_fe::at_quadr<Quadr>(*psi_, is, edge);
 
 			for (std::size_t iq = 0; iq < Quadr::size; ++iq)
 			{

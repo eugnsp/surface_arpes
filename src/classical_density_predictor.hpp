@@ -25,12 +25,12 @@ public:
 	void before_solve()
 	{}
 
-	template<class Element, class Quadr, class Dofs>
+	template<class Quadr, class Dofs>
 	auto get(const Dofs& dofs, const es_fe::Mesh1::Edge_view&) const
 	{
 		es_la::Vector<std::pair<double, double>, Quadr::size> density;
 
-		const auto phis = es_fe::at_quadr<Element, Quadr>(phi_, dofs);
+		const auto phis = es_fe::at_quadr<Quadr>(phi_, dofs);
 		for (std::size_t iq = 0; iq < Quadr::size; ++iq)
 		{
 			const auto z = (phis[iq] + fermi_level_) / p_.temp;

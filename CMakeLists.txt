@@ -1,18 +1,24 @@
 cmake_minimum_required(VERSION 3.13)
 project(arpes)
 
-set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_FLAGS "-Wall -Wpedantic -Wextra -Werror=return-type -m64 -march=native -fmax-errors=5")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "-Wno-unused-parameter -Wno-deprecated-declarations -O3 -DNDEBUG")
 
 set(MKL_LIB "$ENV{MKLROOT}/lib/intel64")
 
 file(GLOB_RECURSE CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 add_executable(arpes "${CPP_FILES}")
+target_compile_features(arpes PUBLIC cxx_std_17)
+target_compile_options(arpes PUBLIC -Wall -Wpedantic -Wextra -Werror=return-type -m64 -march=native 
+					   $<$<CONFIG:DEBUG>:-O0 -g> $<$<CONFIG:RELEASE>:-Wno-unused-parameter -Wno-deprecated-declarations -O3 -DNDEBUG>)
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang")
+	target_compile_options(arpes PUBLIC -ferror-limit=5)
+else()
+	target_compile_options(arpes PUBLIC -fmax-errors=5)
+endif()
+
 target_link_directories(arpes PRIVATE "${MKL_LIB}")
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/external/es_util")
