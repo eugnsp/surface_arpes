@@ -20,9 +20,7 @@ can be found in [this PDF file](doc/model.pdf).
 The results are exported into Matlab/Octave MAT-files and Gnuplot binary
 matrix files.
 
-GCC 8.3 was used to compile the code. Clang doesn't work due to an `auto`
-non-type template parameter deduction [bug](https://stackoverflow.com/questions/56125811/auto-non-type-template-parameter-ambiguous-partial-specializations-in-clang).
-It can easily be overcome, if need be.
+GCC 8.3 was used to compile the code. Clang 7.0 also works.
 
 ## Results
 
