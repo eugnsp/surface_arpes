@@ -48,9 +48,9 @@ Accumulation layer with two bound states:
 ## Dependencies
 
 * Intel MKL
-* `es_fe` library
-* `es_la` library
-* `es_util` library
+* [`es_fe` library](https://github.com/eugnsp/es_fe)
+* [`es_la` library](https://github.com/eugnsp/es_la)
+* [`es_util` library](https://github.com/eugnsp/es_util)
 
 Requires C++11/14/17 compiler.
 
