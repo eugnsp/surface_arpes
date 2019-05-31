@@ -7,6 +7,3 @@
 [submodule "external/es_util"]
 	path = external/es_util
 	url = https://github.com/eugnsp/es_util.git
-[submodule "external/--force"]
-	path = external/--force
-	url = https://github.com/eugnsp/es_fe.git
