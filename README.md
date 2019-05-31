@@ -45,6 +45,15 @@ Accumulation layer with two bound states:
 
 ([Large image](example/accum2.png))
 
+## Dependencies
+
+* Intel MKL
+* `es_fe` library
+* `es_la` library
+* `es_util` library
+
+Requires C++11/14/17 compiler.
+
 ## How to run
 
 Set `MKLROOT` environment variable to point to the MKL installation directory,
