@@ -82,11 +82,10 @@ private:
 		const auto grads = es_fe::gradients<Element, Stiff_quadr>(es_fe::inv_jacobian(edge));
 		const auto stiffness_matrix = es_fe::stiffness_matrix<Element, Stiff_quadr>(grads, 1 / (2 * p_.m_eff));
 		const auto mass_matrix = es_fe::mass_matrix<Element, Mass_quadr>();
-		const auto potential_matrix =
-			es_fe::mass_matrix<Element, Mass_quadr>(es_fe::at_quadr<Mass_quadr>(phi_, edge));
+		const auto potential_matrix = es_fe::mass_matrix<Element, Mass_quadr>(es_fe::at_quadr<Mass_quadr>(phi_, edge));
 
 		const auto length = es_fe::length(edge);
-		const auto dofs = system().dofs(edge);
+		const auto dofs = system().dof_mapper().dofs(edge);
 		for (es_fe::Local_index c = 0; c < dofs.size(); ++c)
 			if (dofs[c].is_free)
 				for (es_fe::Local_index r = 0; r <= c; ++r)

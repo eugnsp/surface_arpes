@@ -13,6 +13,10 @@ target_compile_features(arpes PUBLIC cxx_std_17)
 target_compile_options(arpes PUBLIC -Wall -Wpedantic -Wextra -Werror=return-type -m64 -march=native 
 					   $<$<CONFIG:DEBUG>:-O0 -g> $<$<CONFIG:RELEASE>:-Wno-unused-parameter -Wno-deprecated-declarations -O3 -DNDEBUG>)
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+	target_compile_options(arpes PUBLIC -Wno-psabi)
+endif()
+
 if (CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang")
 	target_compile_options(arpes PUBLIC -ferror-limit=5)
 	target_compile_options(arpes PUBLIC $<$<CONFIG:DEBUG>:-fsanitize=memory>)

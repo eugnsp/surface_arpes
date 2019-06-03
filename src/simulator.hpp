@@ -71,7 +71,7 @@ public:
 		Poisson_solver<Classical_density_predictor> cl_solver(mesh, p);
 		cl_solver.init();
 		cl_solver.solve();
-		cl_solver.write("poisson_cl.mat");
+		cl_solver.write_mat("poisson_cl.mat");
 
 		///////////////////////////////////////////////////////////////////////
 		//* Quantum solution */
@@ -98,7 +98,10 @@ public:
 			if (++i >= p.n_max_iters)
 				throw std::runtime_error("No convergence in the Poisson-Schrodinger solver");
 		}
-		q_solver.write("poisson_q.mat");
+		q_solver.write_mat("poisson_q.mat");
+		//q_solver.write_la("poisson_q.la");
+		// q_solver.read_la("poisson_q.la");
+		// schrod_solver.solve();
 
 		//////////////////////////////////////////////////////////////////////
 		//* Calculation of ARPES spetrum */

@@ -28,14 +28,14 @@ public:
 	template<class Quadr, class Dofs>
 	auto get(const Dofs& dofs, const es_fe::Mesh1::Edge_view&) const
 	{
-		es_la::Vector<std::pair<double, double>, Quadr::size> density;
+		std::pair<es_la::Vector_d<Quadr::size>, es_la::Vector_d<Quadr::size>> density;
 
 		const auto phis = es_fe::at_quadr<Quadr>(phi_, dofs);
 		for (std::size_t iq = 0; iq < Quadr::size; ++iq)
 		{
 			const auto z = (phis[iq] + fermi_level_) / p_.temp;
-			density[iq].first = p_.dopant_conc - effective_dos_ * es_util::fd_int_half(z);
-			density[iq].second = -effective_dos_ / p_.temp * es_util::fd_int_minus_half(z);
+			density.first[iq] = p_.dopant_conc - effective_dos_ * es_util::fd_int_half(z);
+			density.second[iq] = -effective_dos_ / p_.temp * es_util::fd_int_minus_half(z);
 		}
 
 		return density;

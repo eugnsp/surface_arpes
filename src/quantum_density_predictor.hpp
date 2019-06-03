@@ -8,7 +8,7 @@
 #include <es_util/numeric.hpp>
 
 #include <cstddef>
-#include <memory>
+#include <optional>
 #include <utility>
 
 // Calculator of electron density using the Scrodinger equation and the perturbation theory
@@ -34,13 +34,14 @@ public:
 
 	void set_schrodinger_view(Schrodinger_solution_view psi)
 	{
-		psi_ = std::make_unique<Schrodinger_solution_view>(psi);
+		psi_.emplace(std::move(psi));
 	}
 
 	template<class Quadr, class Dofs>
 	auto get(const Dofs& dofs, const es_fe::Mesh1::Edge_view& edge) const
 	{
-		es_la::Vector<std::pair<double, double>, Quadr::size> density{};
+		std::pair<es_la::Vector_d<Quadr::size>, es_la::Vector_d<Quadr::size>> density;
+
 		const auto phis = es_fe::at_quadr<Quadr>(phi_, dofs);
 		const auto prev_phis = es_fe::at_quadr<Quadr>(prev_phi_, dofs);
 		const auto dphis = (phis - prev_phis).eval();
@@ -56,17 +57,17 @@ public:
 				// <f | g> = <f| B |g>, for the eigenproblem A |f> = lambda B |f>.
 
 				const auto z = (-energy + dphis[iq] + fermi_level_) / params_.temp;
-				const auto f = es_util::ln_one_p_exp(z);
-				const auto fd = es_util::fermi(-z);
+				const auto f = es_util::fd_int_zero(z);
+				const auto fd = es_util::fd_int_minus_one(z);
 				const auto psi_sq = es_util::sq(psis[iq]);
 
-				density[iq].first -= effective_dos_ * psi_sq * f;
-				density[iq].second -= effective_dos_ / params_.temp * psi_sq * fd;
+				density.first[iq] -= effective_dos_ * psi_sq * f;
+				density.second[iq] -= effective_dos_ / params_.temp * psi_sq * fd;
 			}
 		}
 
 		for (std::size_t iq = 0; iq < Quadr::size; ++iq)
-			density[iq].first += params_.dopant_conc;
+			density.first[iq] += params_.dopant_conc;
 
 		return density;
 	}
@@ -84,5 +85,5 @@ private:
 	const Poisson_solution_view phi_;
 	Poisson_solution prev_phi_;
 
-	std::unique_ptr<Schrodinger_solution_view> psi_;
+	std::optional<Schrodinger_solution_view> psi_;
 };
