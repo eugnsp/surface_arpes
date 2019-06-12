@@ -9,7 +9,8 @@
 #include <stdexcept>
 #include <string>
 
-[[nodiscard]] inline Params read_input(std::istream& input)
+template<class Stream>
+[[nodiscard]] inline Params read_input(Stream&& input)
 {
 	Params p;
 

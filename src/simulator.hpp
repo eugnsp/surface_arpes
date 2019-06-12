@@ -32,9 +32,8 @@ public:
 		///////////////////////////////////////////////////////////////////////
 		//* Parameters */
 
-		const auto p = read_input(std::cin);
-		// std::ifstream config("input.txt");
-		// const auto p = read_input(config);
+		// const auto p = read_input(std::cin);
+		const auto p = read_input(std::ifstream("input.txt"));
 
 		es_fe::Linear_grid grid;
 		grid.add_tick(0);
@@ -99,6 +98,7 @@ public:
 				throw std::runtime_error("No convergence in the Poisson-Schrodinger solver");
 		}
 		q_solver.write_mat("poisson_q.mat");
+		schrod_solver.write("schrod.mat");
 		//q_solver.write_la("poisson_q.la");
 		// q_solver.read_la("poisson_q.la");
 		// schrod_solver.solve();

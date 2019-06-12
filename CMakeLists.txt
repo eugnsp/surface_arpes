@@ -19,7 +19,6 @@ endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang")
 	target_compile_options(arpes PUBLIC -ferror-limit=5)
-	target_compile_options(arpes PUBLIC $<$<CONFIG:DEBUG>:-fsanitize=memory>)
 else()
 	target_compile_options(arpes PUBLIC -fmax-errors=5)
 endif()

@@ -12,6 +12,7 @@
 #include <es_la/sparse.hpp>
 #include <es_util/algorithm.hpp>
 #include <es_util/numeric.hpp>
+#include <es_util/phys.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -100,9 +101,13 @@ private:
 public:
 	void write(const std::string& file_name)
 	{
+		auto ev = eigen_values_;
+		for (std::size_t i = 0; i < ev.size(); ++i)
+			ev[i] = es_util::au::to_evolt(ev[i]);
+
 		es_la::Matfile_writer m(file_name);
 		m.write("psi", eigen_vectors_);
-		m.write("en", eigen_values_);
+		m.write("en", ev);
 	}
 
 private:
