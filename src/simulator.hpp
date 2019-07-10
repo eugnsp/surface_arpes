@@ -43,7 +43,7 @@ public:
 #ifdef NDEBUG
 		const auto p = (argc == 2) ? read_params(argv[1]) : read_params();
 #else
-		const auto p = read_input(std::ifstream("input.txt"));
+		const auto p = read_params("input.txt");
 #endif
 
 		es_fe::Linear_grid grid;
