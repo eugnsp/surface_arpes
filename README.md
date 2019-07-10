@@ -1,6 +1,6 @@
 # ARPES spectra calculator
 
-## Synopsis
+## 1. Synopsis
 
 This is a code to calculate ARPES spectra for slabs with an accumulation
 or a depletion surface layer. The calculation proceeds in two steps:
@@ -22,7 +22,7 @@ matrix files.
 
 GCC 8.3 was used to compile the code. Clang 7.0 also works.
 
-## Results
+## 2. Results
 
 All images below are presented for exposition only, no attempt has been
 made here to fit any experimental data.
@@ -45,7 +45,7 @@ Accumulation layer with two bound states:
 
 ([Large image](example/accum2.png))
 
-## Dependencies
+## 3. External dependencies
 
 * Intel MKL
 * [`es_fe` library](https://github.com/eugnsp/es_fe)
@@ -54,7 +54,7 @@ Accumulation layer with two bound states:
 
 Requires C++17 compiler. Tested with GCC 8.3.0.
 
-## How to run
+## 4. How to run
 
 Set `MKLROOT` environment variable to point to the MKL installation directory,
 and be sure that your CMake version is >= 3.13. Then:
@@ -81,7 +81,7 @@ chmod 755 accum1.sh
 ./accum1.sh
 ```
 
-## Output files
+## 5. Output files
 
 The following output files are produced:
 
@@ -110,9 +110,9 @@ The following output files are produced:
      * `arpes_e_kz` &ndash; the <code>(E, k<sub>z</sub>)</code> spectrum,
 	 * `arpes_kx_e` &ndash; the <code>(k<sub>x</sub>, E)</code> spectrum,
 	 * `arpes_kx_kz` &ndash; the <code>(k<sub>x</sub>, k<sub>z</sub>)</code> spectrum,
-	 * `e_min`, `e_max` &ndash; define the energy range <code>E<sub>min</sub> &leq; E &leq; E<sub>max</sub></code>,
-	 * `kx_max` &ndash; define the momentum range <code>-k<sub>x max</sub> &leq; k<sub>x</sub> &leq; k<sub>x max</sub></code> (in *&angst;<sup>-1</sup>*),
-	 * `kz_max` &ndash; define the momentum range <code>-k<sub>z max</sub> &leq; k<sub>z</sub> &leq; k<sub>z max</sub></code> (in *&angst;<sup>-1</sup>*),
+	 * `e_min`, `e_max` &ndash; the energy range <code>E<sub>min</sub> &leq; E &leq; E<sub>max</sub></code>,
+	 * `kx_max` &ndash; the momentum range <code>-k<sub>x max</sub> &leq; k<sub>x</sub> &leq; k<sub>x max</sub></code> (in *&angst;<sup>-1</sup>*),
+	 * `kz_max` &ndash; the momentum range <code>-k<sub>z max</sub> &leq; k<sub>z</sub> &leq; k<sub>z max</sub></code> (in *&angst;<sup>-1</sup>*),
 	 * `mfp` &ndash; electron mean-free path <code>&lambda;</code> (in *nm*),
 	 * `sigma_e_inst` &ndash; the instrumental broadening <code>&delta;<sub>A</sub>E</code> (in *eV*),
 	 * `sigma_kx_inst` &ndash; the instrumental broadening <code>&delta;<sub>A</sub>k</code> (in *&angst;<sup>-1</sup>*),
@@ -122,7 +122,7 @@ The following output files are produced:
 
   The binary files that contain ARPES spectra for visualization using Gnuplot, see shell scripts in the `plot` directory. The figures above were generated using the `plot/plot_all.sh` shell script.
 
-## References
+## 6. References
 
 1. V.N.Strocov. *Photoemission response of 2D states.*\
 [J. Electron. Spectrosc. **229**, 100 (2018)](https://doi.org/10.1016/j.elspec.2018.09.001),
@@ -134,3 +134,7 @@ from the ARPES signature of a 2DEG.*\
 two-dimensional Schr&ouml;dinger&ndash;Poisson equations in quantum
 structures*.\
 [J. Appl. Phys. 81, 7880 (1997)](https://doi.org/10.1063/1.365396).
+
+## 7. License
+
+This code is distributed under GNU General Public License v3.0.
