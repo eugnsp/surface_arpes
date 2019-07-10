@@ -89,8 +89,8 @@ The following output files are produced:
 
   The Matlab files that contain the following variables:
 
-	 * `vertices` &ndash; mesh points <code>z<sub>i</sub></code> (in **nm**),
-	 * `ec` &ndash; <code>Ec(z<sub>i</sub>)</code> at mesh points (in **eV**),
+	 * `vertices` &ndash; mesh points <code>z<sub>i</sub></code> (in *nm*),
+	 * `ec` &ndash; <code>Ec(z<sub>i</sub>)</code> at mesh points (in *eV*),
 	 * `f` &ndash; the Fermi level (in *eV*),
 	 * `n` &ndash; the electron density <code>n(z<sub>i+1/2</sub>)</code> at edge mid-points (in *eV*).
 
