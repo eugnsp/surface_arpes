@@ -27,13 +27,24 @@ public:
 	Simulator()
 	{}
 
-	void run(int /* argc */, const char** /* argv */)
+	auto read_params(const char* file_name = nullptr)
+	{
+		if (!file_name)
+			return read_input(std::cin);
+		else
+			return read_input(std::ifstream(file_name));
+	}
+
+	void run([[maybe_unused]] int argc, [[maybe_unused]] const char** argv)
 	{
 		///////////////////////////////////////////////////////////////////////
 		//* Parameters */
 
-		// const auto p = read_input(std::cin);
+#ifdef NDEBUG
+		const auto p = (argc == 2) ? read_params(argv[1]) : read_params();
+#else
 		const auto p = read_input(std::ifstream("input.txt"));
+#endif
 
 		es_fe::Linear_grid grid;
 		grid.add_tick(0);
@@ -89,8 +100,8 @@ public:
 			q_solver.solve();
 
 			auto sup_norm = q_solver.density_predictor().potential_change_sup_norm();
-			std::cout << i + 1 << ". Potential change |phi - phi_prev|_s = " << es_util::au::to_evolt(sup_norm)
-					  << " eV" << std::endl;
+			std::cout << i + 1 << ". Potential change |phi - phi_prev|_s = " << es_util::au::to_evolt(sup_norm) << " eV"
+					  << std::endl;
 
 			if (sup_norm < p.stop_ec_sup_norm)
 				break;
@@ -137,7 +148,8 @@ public:
 		//////////////////////////////////////////////////////////////////////
 
 		std::cout << "Instrumental energy broadening: sigma_E = " << es_util::au::to_evolt(p.sigma_e_inst) << " eV\n"
-				  << "Instrumental Kx broadening: sigma_Kx = " << es_util::au::to_per_ang(p.sigma_kx_inst) << " Ang^-1\n"
+				  << "Instrumental Kx broadening: sigma_Kx = " << es_util::au::to_per_ang(p.sigma_kx_inst)
+				  << " Ang^-1\n"
 				  << "Electron's mean free path: lambda = " << es_util::au::to_nm(p.mfp) << " nm\n"
 				  << "Minimum energy: E_min = " << es_util::au::to_evolt(p.e_min) << " eV\n"
 				  << "Maximum energy: E_max = " << es_util::au::to_evolt(p.e_max) << " eV\n"
