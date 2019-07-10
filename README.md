@@ -1,17 +1,5 @@
 # ARPES spectra calculator
 
-## Contents:
-
-* [Synopsis](#synopsis)
-* [Results](#results)
-* [How to run](#how-to-run)
-* [Output files](#output-files)
-* [External dependencies](#external-dependencies)
-* [References](#references)
-* [License](#license)
-
----
-
 ## Synopsis
 
 This is a code to calculate ARPES spectra for slabs with an accumulation
@@ -31,8 +19,6 @@ can be found in [this PDF file](doc/model.pdf).
 
 The results are exported into Matlab/Octave MAT-files and Gnuplot binary
 matrix files.
-
-GCC 8.3 was used to compile the code. Clang 7.0 also works.
 
 ## Results
 
@@ -84,7 +70,7 @@ chmod 755 accum1.sh
 ./accum1.sh
 ```
 
-Requires C++17 compiler. Tested with GCC 8.3.0.
+Requires C++17 compiler. Tested with GCC 8.3.0 and Clang 7.0.
 
 ## Output files
 
@@ -153,7 +139,7 @@ from the ARPES signature of a 2DEG.*\
 3. A.Trellakis et al. *Iteration scheme for the solution of the
 two-dimensional Schr&ouml;dinger&ndash;Poisson equations in quantum
 structures*.\
-[J. Appl. Phys. 81, 7880 (1997)](https://doi.org/10.1063/1.365396).
+[J. Appl. Phys. **81**, 7880 (1997)](https://doi.org/10.1063/1.365396).
 
 ## License
 
