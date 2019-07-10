@@ -43,7 +43,7 @@ Accumulation layer with two bound states:
 
 ([Large image](example/accum2.png))
 
-## How to run
+## How to build
 
 Set `MKLROOT` environment variable to point to the MKL installation directory,
 and be sure that your CMake version is >= 3.13. Then:
@@ -55,13 +55,24 @@ mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=RELEASE .. && make
 ```
 
-to build the tool and
+to build the tool.
+
+C++17 compiler is required. Tested with GCC 8.3.0 and Clang 7.0.
+
+## How to run
 
 ```sh
+./arpes [file]
+
+./arpes ../example/accum1.txt
 ./arpes < ../example/accum1.txt
 ```
 
-to run it. Alternatively, you can run `arpes` via a shell script
+where `file` is the text file with simulation parameters (see examples in
+the `example` directory). The standard input is used to read parameters
+if no `file` is specified.
+
+You can run `arpes` via a shell script
 
 ```sh
 echo '#!./arpes' > accum1.sh
@@ -69,8 +80,6 @@ cat ../example/accum1.txt >> accum1.sh
 chmod 755 accum1.sh
 ./accum1.sh
 ```
-
-Requires C++17 compiler. Tested with GCC 8.3.0 and Clang 7.0.
 
 ## Output files
 

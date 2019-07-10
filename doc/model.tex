@@ -29,7 +29,7 @@ surface layer (quasi-1D~model)}
 
 This document conains a succinct description of equations that are numerically solved
 in the code. No attempt has been made to present mathematically and/or physically
-rigorous derivations.
+rigorous derivations. See references for more information.
 
 % =============================================================================
 \section{Quasi-classical problem}
@@ -114,7 +114,7 @@ integrate by parts taking into account the boundary conditions:
 	+ 4\pi \int \dd z \, (N_D - n_0) \psi_i.
 \end{multline}
 
-Expanding $\delta\phi(z)$ over $\psi_i(z)$, $\delta\phi(x) = \sum_j \delta\phi_j \psi_j(z)$, = \\
+Expanding $\delta\phi(z)$ over $\psi_i(z)$, $\delta\phi(x) = \sum_j \delta\phi_j \psi_j(z)$,
 we obtain the matrix equation:
 \begin{equation}
 	\sum_j \left( S_{ij} - M_{ij} \right) \delta\phi_j = r_i
