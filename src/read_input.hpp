@@ -2,7 +2,7 @@
 #include "params.hpp"
 #include "tools.hpp"
 
-#include <es_util/phys.hpp>
+#include <esu/phys.hpp>
 
 #include <istream>
 #include <sstream>
@@ -28,11 +28,11 @@ template<class Stream>
 			switch (i)
 			{
 			case 0:
-				p.length = es_util::au::from_nm(d);
+				p.length = esu::au::from_nm(d);
 				break;
 
 			case 1:
-				p.temp = es_util::au::from_kelvin(d);
+				p.temp = esu::au::from_kelvin(d);
 				break;
 
 			case 2:
@@ -44,15 +44,15 @@ template<class Stream>
 				break;
 
 			case 4:
-				p.dopant_conc = es_util::au::from_per_cm3(d);
+				p.dopant_conc = esu::au::from_per_cm3(d);
 				break;
 
 			case 5:
-				p.ec_surf = es_util::au::from_evolt(d);
+				p.ec_surf = esu::au::from_evolt(d);
 				break;
 
 			case 6:
-				p.gamma_disorder = from_lorentz_fwhm(es_util::au::from_evolt(d));
+				p.gamma_disorder = from_lorentz_fwhm(esu::au::from_evolt(d));
 				break;
 
 			case 7:
@@ -64,27 +64,27 @@ template<class Stream>
 				break;
 
 			case 9:
-				p.stop_ec_sup_norm = es_util::au::from_evolt(d);
+				p.stop_ec_sup_norm = esu::au::from_evolt(d);
 				break;
 
 			case 10:
-				p.sigma_e_inst = from_gauss_fwhm(es_util::au::from_evolt(d));
+				p.sigma_e_inst = from_gauss_fwhm(esu::au::from_evolt(d));
 				break;
 
 			case 11:
-				p.sigma_kx_inst = from_gauss_fwhm(es_util::au::from_per_ang(d));
+				p.sigma_kx_inst = from_gauss_fwhm(esu::au::from_per_ang(d));
 				break;
 
 			case 12:
-				p.mfp = es_util::au::from_nm(d);
+				p.mfp = esu::au::from_nm(d);
 				break;
 
 			case 13:
-				p.e_min = es_util::au::from_evolt(d);
+				p.e_min = esu::au::from_evolt(d);
 				break;
 
 			case 14:
-				p.e_max = es_util::au::from_evolt(d);
+				p.e_max = esu::au::from_evolt(d);
 				break;
 
 			case 15:
@@ -92,7 +92,7 @@ template<class Stream>
 				break;
 
 			case 16:
-				p.kx_max = es_util::au::from_per_ang(d);
+				p.kx_max = esu::au::from_per_ang(d);
 				break;
 
 			case 17:
@@ -100,7 +100,7 @@ template<class Stream>
 				break;
 
 			case 18:
-				p.kz_max = es_util::au::from_per_ang(d);
+				p.kz_max = esu::au::from_per_ang(d);
 				break;
 			}
 

@@ -2,7 +2,9 @@ BasedOnStyle: LLVM
 AccessModifierOffset: -4
 AlignAfterOpenBracket: DontAlign
 AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: Never
 AllowShortFunctionsOnASingleLine: None
+AllowShortLambdasOnASingleLine: All
 AlwaysBreakTemplateDeclarations: true
 BinPackArguments: true
 BinPackParameters: true

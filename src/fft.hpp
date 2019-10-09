@@ -1,5 +1,5 @@
 #pragma once
-#include <es_la/dense.hpp>
+#include <esl/dense.hpp>
 
 #include <mkl_dfti.h>
 #include <mkl_types.h>
@@ -15,10 +15,10 @@
 			throw std::runtime_error(::DftiErrorMessage(status));                                                      \
 	} while (0)
 
-inline es_la::Matrix_x<std::complex<double>> fft_1d_cols_real_to_half_complex(const es_la::Matrix_xd& in)
+inline esl::Matrix_x<std::complex<double>> fft_1d_cols_real_to_half_complex(const esl::Matrix_xd& in)
 {
 	const auto fft_size = in.rows() / 2 + 1;
-	es_la::Matrix_x<std::complex<double>> out(fft_size, in.cols());
+	esl::Matrix_x<std::complex<double>> out(fft_size, in.cols());
 
 	::DFTI_DESCRIPTOR_HANDLE handle;
 	CALL_MKL_DFTI(DftiCreateDescriptor, &handle, DFTI_DOUBLE, DFTI_REAL, 1, in.rows());

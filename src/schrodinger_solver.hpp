@@ -7,12 +7,12 @@
 #include <es_fe/geometry.hpp>
 #include <es_fe/math.hpp>
 #include <es_fe/mesh/mesh1.hpp>
-#include <es_la/dense.hpp>
-#include <es_la/io.hpp>
-#include <es_la/sparse.hpp>
-#include <es_util/algorithm.hpp>
-#include <es_util/numeric.hpp>
-#include <es_util/phys.hpp>
+#include <esl/dense.hpp>
+#include <esl/io.hpp>
+#include <esl/sparse.hpp>
+#include <esu/algorithm.hpp>
+#include <esu/numeric.hpp>
+#include <esu/phys.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -42,6 +42,7 @@ private:
 
 	double max_energy() const
 	{
+		// TO DO : remove magic constant "7"
 		return charge_neutral_fermi_level(p_) + 7 * p_.temp;
 	}
 
@@ -54,15 +55,13 @@ private:
 	// using the Bohr-Sommerfeld quantization rule
 	virtual std::size_t eigen_space_dim() const override
 	{
-		const auto max_e = max_energy();
-
-		const auto zs = [this](auto i) { return mesh().vertex(i).x(); };
-		const auto fn = [this, max_e](auto i) {
+		const auto fn = [this, max_e = max_energy()](auto i) {
 			const auto e = max_e + phi_[i];
-			return e <= 0 ? 0 : std::sqrt(2 * p_.m_eff * e);
+			return (e <= 0) ? 0 : std::sqrt(2 * p_.m_eff * e);
 		};
 
-		const auto n_states = es_util::trapez_int(mesh().n_vertices(), zs, fn, 0.) / es_util::math::pi;
+		const auto zs = [this](auto i) { return mesh().vertex(i).x(); };
+		const auto n_states = esu::trapez_int(mesh().n_vertices(), zs, fn, 0.) / esu::math::pi;
 		return static_cast<std::size_t>(std::ceil(n_states));
 	}
 
@@ -87,12 +86,12 @@ private:
 
 		const auto length = es_fe::length(edge);
 		const auto dofs = system().dof_mapper().dofs(edge);
-		for (es_fe::Local_index c = 0; c < dofs.size(); ++c)
+		for (std::size_t c = 0; c < dofs.size(); ++c)
 			if (dofs[c].is_free)
-				for (es_fe::Local_index r = 0; r <= c; ++r)
+				for (std::size_t r = 0; r <= c; ++r)
 					if (dofs[r].is_free)
 					{
-						const auto [ir, ic] = es_util::sorted(dofs[r].index, dofs[c].index);
+						const auto [ir, ic] = esu::sorted(dofs[r].index, dofs[c].index);
 						matrix_a_(ir, ic) += length * (stiffness_matrix(r, c) - potential_matrix(r, c));
 						matrix_b_(ir, ic) += length * mass_matrix(r, c);
 					}
@@ -103,9 +102,9 @@ public:
 	{
 		auto ev = eigen_values_;
 		for (std::size_t i = 0; i < ev.size(); ++i)
-			ev[i] = es_util::au::to_evolt(ev[i]);
+			ev[i] = esu::au::to_evolt(ev[i]);
 
-		es_la::Matfile_writer m(file_name);
+		esl::Matfile_writer m(file_name);
 		m.write("psi", eigen_vectors_);
 		m.write("en", ev);
 	}

@@ -4,8 +4,8 @@
 #include "schrodinger_solver_base.hpp"
 #include "tools.hpp"
 
-#include <es_la/dense.hpp>
-#include <es_util/numeric.hpp>
+#include <esl/dense.hpp>
+#include <esu/numeric.hpp>
 
 #include <cstddef>
 #include <optional>
@@ -40,7 +40,7 @@ public:
 	template<class Quadr, class Dofs>
 	auto get(const Dofs& dofs, const es_fe::Mesh1::Edge_view& edge) const
 	{
-		std::pair<es_la::Vector_d<Quadr::size>, es_la::Vector_d<Quadr::size>> density;
+		std::pair<esl::Vector_d<Quadr::size>, esl::Vector_d<Quadr::size>> density;
 
 		const auto phis = es_fe::at_quadr<Quadr>(phi_, dofs);
 		const auto prev_phis = es_fe::at_quadr<Quadr>(prev_phi_, dofs);
@@ -57,9 +57,9 @@ public:
 				// <f | g> = <f| B |g>, for the eigenproblem A |f> = lambda B |f>.
 
 				const auto z = (-energy + dphis[iq] + fermi_level_) / params_.temp;
-				const auto f = es_util::fd_int_zero(z);
-				const auto fd = es_util::fd_int_minus_one(z);
-				const auto psi_sq = es_util::sq(psis[iq]);
+				const auto f = esu::fd_int_zero(z);
+				const auto fd = esu::fd_int_minus_one(z);
+				const auto psi_sq = esu::sq(psis[iq]);
 
 				density.first[iq] -= effective_dos_ * psi_sq * f;
 				density.second[iq] -= effective_dos_ / params_.temp * psi_sq * fd;
@@ -74,7 +74,7 @@ public:
 
 	double potential_change_sup_norm() const
 	{
-		return es_la::norm_sup(phi_.values() - prev_phi_.values());
+		return esl::norm_sup(phi_.values() - prev_phi_.values());
 	}
 
 private:

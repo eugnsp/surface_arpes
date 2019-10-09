@@ -11,10 +11,10 @@
 
 #include <es_fe/geometry.hpp>
 #include <es_fe/mesh/mesh1.hpp>
-#include <es_la/dense.hpp>
-#include <es_la/io.hpp>
-#include <es_util/numeric.hpp>
-#include <es_util/phys.hpp>
+#include <esl/dense.hpp>
+#include <esl/io.hpp>
+#include <esu/numeric.hpp>
+#include <esu/phys.hpp>
 
 #include <cassert>
 #include <cmath>
@@ -51,26 +51,26 @@ public:
 		grid.add_tick(p.nx - 1, p.length);
 
 		///////////////////////////////////////////////////////////////////////
-		//* Running Poisson-Schrodinger solver */
+		//* The Poisson-Schrodinger solver */
 
 		const auto fermi = charge_neutral_fermi_level(p);
 
 		std::cout << "----------------------------------------------\n"
-				  << "Running Poisson-Schrodinger solver\n"
+				  << "Running the Poisson-Schrodinger solver\n"
 				  << std::endl;
 
-		std::cout << "System length: L = " << es_util::au::to_nm(p.length) << " nm\n"
-				  << "Temperature: T = " << es_util::au::to_kelvin(p.temp) << " K\n"
+		std::cout << "System length: L = " << esu::au::to_nm(p.length) << " nm\n"
+				  << "Temperature: T = " << esu::au::to_kelvin(p.temp) << " K\n"
 				  << "Effective mass: m_eff = " << p.m_eff << "\n"
 				  << "Static dielectric permittivity: eps = " << p.eps << "\n"
-				  << "Dopant concentration: N_d = " << es_util::au::to_per_cm3(p.dopant_conc) << " cm^-3\n"
-				  << "Surface potential: Ec(0) = " << es_util::au::to_evolt(p.ec_surf) << " eV\n"
-				  << "Disorder strength: gamma_D = " << es_util::au::to_evolt(p.gamma_disorder) << " eV\n"
-				  << "Fermi level: F = " << es_util::au::to_evolt(fermi) << " eV\n"
+				  << "Dopant concentration: N_d = " << esu::au::to_per_cm3(p.dopant_conc) << " cm^-3\n"
+				  << "Surface potential: Ec(0) = " << esu::au::to_evolt(p.ec_surf) << " eV\n"
+				  << "Disorder strength: gamma_D = " << esu::au::to_evolt(p.gamma_disorder) << " eV\n"
+				  << "Fermi level: F = " << esu::au::to_evolt(fermi) << " eV\n"
 				  << "Number of potential mesh points: N_x = " << p.nx << "\n"
 				  << "Poisson-Schrodinger solver maximum number of iterations: N_max = " << p.n_max_iters << "\n"
 				  << "Poisson-Schrodinger solver stopping criterion: |phi - phi_prev|_s < "
-				  << es_util::au::to_evolt(p.stop_ec_sup_norm) << " eV\n"
+				  << esu::au::to_evolt(p.stop_ec_sup_norm) << " eV\n"
 				  << std::endl;
 
 		///////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ public:
 			q_solver.solve();
 
 			auto sup_norm = q_solver.density_predictor().potential_change_sup_norm();
-			std::cout << i + 1 << ". Potential change |phi - phi_prev|_s = " << es_util::au::to_evolt(sup_norm) << " eV"
+			std::cout << i + 1 << ". Potential change |phi - phi_prev|_s = " << esu::au::to_evolt(sup_norm) << " eV"
 					  << std::endl;
 
 			if (sup_norm < p.stop_ec_sup_norm)
@@ -122,7 +122,7 @@ public:
 				  << std::endl;
 
 		const auto psi = schrod_solver.solution_view();
-		es_la::Matrix_xd psi_z(*mesh.n_vertices(), psi.size());
+		esl::Matrix_xd psi_z(*mesh.n_vertices(), psi.size());
 		for (auto& v : mesh.vertices())
 		{
 			const auto exp = std::exp(-v.vertex().x() / p.mfp);
@@ -132,7 +132,7 @@ public:
 
 		const auto psi_k = fft_1d_cols_real_to_half_complex(psi_z);
 
-		const auto dkz = es_util::math::two_pi / p.length;
+		const auto dkz = esu::math::two_pi / p.length;
 		const auto nkz = std::min(static_cast<std::size_t>(std::ceil(p.kz_max / dkz)), psi_k.rows());
 
 		const auto ikx_max = p.nkx - 1;
@@ -141,49 +141,49 @@ public:
 		const auto ikz_max = nkz - 1;
 		const auto nkz_f = 2 * ikz_max + 1;
 
-		const auto kxs = es_util::Linear_grid<double>::from_min_max(0, p.kx_max, p.nkx);
-		const auto kzs = es_util::Linear_grid<double>::from_min_step(0, dkz, nkz);
-		const auto es = es_util::Linear_grid<double>::from_min_max(p.e_min, p.e_max, p.ne);
+		const auto kxs = esu::Linear_grid<double>::from_min_max(0, p.kx_max, p.nkx);
+		const auto kzs = esu::Linear_grid<double>::from_min_step(0, dkz, nkz);
+		const auto es = esu::Linear_grid<double>::from_min_max(p.e_min, p.e_max, p.ne);
 
 		//////////////////////////////////////////////////////////////////////
 
-		std::cout << "Instrumental energy broadening: sigma_E = " << es_util::au::to_evolt(p.sigma_e_inst) << " eV\n"
-				  << "Instrumental Kx broadening: sigma_Kx = " << es_util::au::to_per_ang(p.sigma_kx_inst)
+		std::cout << "Instrumental energy broadening: sigma_E = " << esu::au::to_evolt(p.sigma_e_inst) << " eV\n"
+				  << "Instrumental Kx broadening: sigma_Kx = " << esu::au::to_per_ang(p.sigma_kx_inst)
 				  << " Ang^-1\n"
-				  << "Electron's mean free path: lambda = " << es_util::au::to_nm(p.mfp) << " nm\n"
-				  << "Minimum energy: E_min = " << es_util::au::to_evolt(p.e_min) << " eV\n"
-				  << "Maximum energy: E_max = " << es_util::au::to_evolt(p.e_max) << " eV\n"
+				  << "Electron's mean free path: lambda = " << esu::au::to_nm(p.mfp) << " nm\n"
+				  << "Minimum energy: E_min = " << esu::au::to_evolt(p.e_min) << " eV\n"
+				  << "Maximum energy: E_max = " << esu::au::to_evolt(p.e_max) << " eV\n"
 				  << "Energy resolution: N_E = " << p.ne << "\n"
-				  << "Energy resolution: delta_E = " << es_util::au::to_evolt((p.e_max - p.e_min) / p.ne) << " eV\n"
-				  << "Maximum Kx: Kx_max = " << es_util::au::to_per_ang(p.kx_max) << " Ang^-1\n"
+				  << "Energy resolution: delta_E = " << esu::au::to_evolt((p.e_max - p.e_min) / p.ne) << " eV\n"
+				  << "Maximum Kx: Kx_max = " << esu::au::to_per_ang(p.kx_max) << " Ang^-1\n"
 				  << "Kx mesh size: N_Kx = " << nkx_f << "\n"
-				  << "Kx resolution: delta_Kx = " << es_util::au::to_per_ang(p.kx_max / p.nkx) << " Ang^-1\n"
-				  << "Maximum Kz: Kz_max = " << es_util::au::to_per_ang(kzs.back()) << " Ang^-1\n"
+				  << "Kx resolution: delta_Kx = " << esu::au::to_per_ang(p.kx_max / p.nkx) << " Ang^-1\n"
+				  << "Maximum Kz: Kz_max = " << esu::au::to_per_ang(kzs.back()) << " Ang^-1\n"
 				  << "Kz mesh size: N_Kz = " << nkz_f << "\n"
-				  << "Kz resolution: delta_Kz = " << es_util::au::to_per_ang(dkz) << " Ang^-1\n"
+				  << "Kz resolution: delta_Kz = " << esu::au::to_per_ang(dkz) << " Ang^-1\n"
 				  << std::endl;
 
 		//////////////////////////////////////////////////////////////////////
 
-		es_la::Matrix_xd arp_kx_e(nkx_f, p.ne, 0);
-		es_la::Matrix_xd arp_kx_kz(nkx_f, nkz_f, 0);
-		es_la::Matrix_xd arp_e_kz(p.ne, nkz_f, 0);
+		esl::Matrix_xd arp_kx_e(nkx_f, p.ne, 0);
+		esl::Matrix_xd arp_kx_kz(nkx_f, nkz_f, 0);
+		esl::Matrix_xd arp_e_kz(p.ne, nkz_f, 0);
 
 		const auto ie_fermi = static_cast<std::size_t>(std::round((fermi - es[0]) / (es[1] - es[0])));
 		if (ie_fermi >= p.ne)
 			throw std::runtime_error("Fermi level is outside the specified energy range");
 
-		es_la::Matrix_xd arp_n(nkx_f, p.ne);
+		esl::Matrix_xd arp_n(nkx_f, p.ne);
 		for (std::size_t ip = 0; ip < psi.size(); ++ip)
 		{
 			for (std::size_t ie = 0; ie < p.ne; ++ie)
 			{
-				const auto f_fd = es_util::fermi((es[ie] - fermi) / p.temp);
+				const auto f_fd = esu::fermi((es[ie] - fermi) / p.temp);
 				for (std::size_t ikx = 0; ikx < p.nkx; ++ikx)
 				{
-					const auto k_sq_over_2m = es_util::sq(kxs[ikx]) / (2 * p.m_eff);
+					const auto k_sq_over_2m = esu::sq(kxs[ikx]) / (2 * p.m_eff);
 					const auto e = es[ie] - (psi[ip] + k_sq_over_2m);
-					const auto f_d = 1 / (1 + es_util::sq(e / p.gamma_disorder));
+					const auto f_d = 1 / (1 + esu::sq(e / p.gamma_disorder));
 					arp_n(ikx_max + ikx, ie) = arp_n(ikx_max - ikx, ie) = f_d * f_fd;
 				}
 			}
@@ -216,18 +216,18 @@ public:
 		//////////////////////////////////////////////////////////////////////
 		//* Export results */
 
-		es_la::Matfile_writer mat("arpes.mat");
+		esl::Matfile_writer mat("arpes.mat");
 
-		mat.write("e_min", es_util::au::to_evolt(p.e_min));
-		mat.write("e_max", es_util::au::to_evolt(p.e_max));
-		mat.write("kx_max", es_util::au::to_per_ang(p.kx_max));
-		mat.write("kz_max", es_util::au::to_per_ang(kzs.back()));
+		mat.write("e_min", esu::au::to_evolt(p.e_min));
+		mat.write("e_max", esu::au::to_evolt(p.e_max));
+		mat.write("kx_max", esu::au::to_per_ang(p.kx_max));
+		mat.write("kz_max", esu::au::to_per_ang(kzs.back()));
 
-		mat.write("gamma_disorder", es_util::au::to_evolt(p.gamma_disorder));
-		mat.write("sigma_e_inst", es_util::au::to_evolt(p.sigma_e_inst));
-		mat.write("sigma_kx_inst", es_util::au::to_per_ang(p.sigma_kx_inst));
+		mat.write("gamma_disorder", esu::au::to_evolt(p.gamma_disorder));
+		mat.write("sigma_e_inst", esu::au::to_evolt(p.sigma_e_inst));
+		mat.write("sigma_kx_inst", esu::au::to_per_ang(p.sigma_kx_inst));
 
-		mat.write("mfp", es_util::au::to_nm(p.mfp));
+		mat.write("mfp", esu::au::to_nm(p.mfp));
 
 		mat.write("arpes_kx_e", arp_kx_e);
 		mat.write("arpes_kx_kz", arp_kx_kz);
@@ -235,18 +235,18 @@ public:
 
 		const auto kxs_title = [&kxs, ikx_max](auto i) {
 			const auto kx = (i <= ikx_max) ? -kxs[ikx_max - i] : kxs[i - ikx_max];
-			return es_util::au::to_per_ang(kx);
+			return esu::au::to_per_ang(kx);
 		};
 
 		const auto kzs_title = [&kzs, ikz_max](auto i) {
 			const auto kz = (i <= ikz_max) ? -kzs[ikz_max - i] : kzs[i - ikz_max];
-			return es_util::au::to_per_ang(kz);
+			return esu::au::to_per_ang(kz);
 		};
 
-		const auto es_title = [&es](auto i) { return es_util::au::to_evolt(es[i]); };
+		const auto es_title = [&es](auto i) { return esu::au::to_evolt(es[i]); };
 
-		es_la::write_gnuplot_binary("arpes_kx_e.dat", arp_kx_e, kxs_title, es_title);
-		es_la::write_gnuplot_binary("arpes_kx_kz.dat", arp_kx_kz, kxs_title, kzs_title);
-		es_la::write_gnuplot_binary("arpes_e_kz.dat", arp_e_kz, es_title, kzs_title);
+		esl::write_gnuplot_binary("arpes_kx_e.dat", arp_kx_e, kxs_title, es_title);
+		esl::write_gnuplot_binary("arpes_kx_kz.dat", arp_kx_kz, kxs_title, kzs_title);
+		esl::write_gnuplot_binary("arpes_e_kz.dat", arp_e_kz, es_title, kzs_title);
 	}
 };

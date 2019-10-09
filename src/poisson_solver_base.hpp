@@ -9,16 +9,16 @@
 #include <es_fe/mesh/mesh1.hpp>
 #include <es_fe/var_list.hpp>
 
-#include <es_la/dense.hpp>
-#include <es_la/sparse.hpp>
-#include <es_la/sparse/solver/pardiso_solver.hpp>
-#include <es_util/numeric.hpp>
-#include <es_util/phys.hpp>
+#include <esl/dense.hpp>
+#include <esl/sparse.hpp>
+#include <esl/sparse/solver/pardiso_solver.hpp>
+#include <esu/numeric.hpp>
+#include <esu/phys.hpp>
 
 #include <iomanip>
 #include <iostream>
 
-using Poisson_sp_solver = es_la::Pardiso_solver<es_la::Csr_matrix<double, es_la::Symmetric_upper>>;
+using Poisson_sp_solver = esl::Pardiso_solver<esl::Csr_matrix<double, esl::Symmetric_upper>>;
 
 class Poisson_solver_base : public es_fe::Matrix_based_nonlinear_solver<Poisson_system, Poisson_sp_solver>
 {

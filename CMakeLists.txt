@@ -25,11 +25,8 @@ endif()
 
 target_link_directories(arpes PRIVATE "${MKL_LIB}")
 
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/external/es_util")
-target_link_libraries(arpes es_util)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/external/esu")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/external/esl")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/external/esf")
 
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/external/es_la")
-target_link_libraries(arpes es_la)
-
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/external/es_fe")
-target_link_libraries(arpes es_fe)
+target_link_libraries(arpes esu esl esf)

@@ -3,8 +3,8 @@
 #include "poisson_solver_base.hpp"
 #include "tools.hpp"
 
-#include <es_la/dense.hpp>
-#include <es_util/numeric.hpp>
+#include <esl/dense.hpp>
+#include <esu/numeric.hpp>
 
 #include <cstddef>
 #include <utility>
@@ -28,14 +28,14 @@ public:
 	template<class Quadr, class Dofs>
 	auto get(const Dofs& dofs, const es_fe::Mesh1::Edge_view&) const
 	{
-		std::pair<es_la::Vector_d<Quadr::size>, es_la::Vector_d<Quadr::size>> density;
+		std::pair<esl::Vector_d<Quadr::size>, esl::Vector_d<Quadr::size>> density;
 
 		const auto phis = es_fe::at_quadr<Quadr>(phi_, dofs);
 		for (std::size_t iq = 0; iq < Quadr::size; ++iq)
 		{
 			const auto z = (phis[iq] + fermi_level_) / p_.temp;
-			density.first[iq] = p_.dopant_conc - effective_dos_ * es_util::fd_int_half(z);
-			density.second[iq] = -effective_dos_ / p_.temp * es_util::fd_int_minus_half(z);
+			density.first[iq] = p_.dopant_conc - effective_dos_ * esu::fd_int_half(z);
+			density.second[iq] = -effective_dos_ / p_.temp * esu::fd_int_minus_half(z);
 		}
 
 		return density;

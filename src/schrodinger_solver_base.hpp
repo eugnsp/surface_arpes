@@ -9,11 +9,11 @@
 #include <es_fe/matrix_based/eigen_solver.hpp>
 #include <es_fe/mesh/mesh1.hpp>
 
-#include <es_la/dense.hpp>
-#include <es_la/sparse.hpp>
-#include <es_la/sparse/solver/feast_interval_solver.hpp>
+#include <esl/dense.hpp>
+#include <esl/sparse.hpp>
+#include <esl/sparse/solver/feast_interval_solver.hpp>
 
-using Schrodinger_eigen_solver = es_la::Feast_interval_solver<es_la::Csr_matrix<double, es_la::Symmetric_upper>>;
+using Schrodinger_eigen_solver = esl::Feast_interval_solver<esl::Csr_matrix<double, esl::Symmetric_upper>>;
 
 class Schrodinger_solver_base : public es_fe::Matrix_based_eigen_solver<Schrodinger_system, Schrodinger_eigen_solver>
 {
