@@ -26,11 +26,11 @@ public:
 	{}
 
 	template<class Quadr, class Dofs>
-	auto get(const Dofs& dofs, const es_fe::Mesh1::Edge_view&) const
+	auto get(const Dofs& dofs, const esf::Mesh1::Edge_view&) const
 	{
 		std::pair<esl::Vector_d<Quadr::size>, esl::Vector_d<Quadr::size>> density;
 
-		const auto phis = es_fe::at_quadr<Quadr>(phi_, dofs);
+		const auto phis = esf::at_quadr<Quadr>(phi_, dofs);
 		for (std::size_t iq = 0; iq < Quadr::size; ++iq)
 		{
 			const auto z = (phis[iq] + fermi_level_) / p_.temp;

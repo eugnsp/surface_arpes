@@ -4,9 +4,9 @@
 #include "schrodinger_solver_base.hpp"
 #include "tools.hpp"
 
-#include <es_fe/geometry.hpp>
-#include <es_fe/math.hpp>
-#include <es_fe/mesh/mesh1.hpp>
+#include <esf/geometry.hpp>
+#include <esf/math.hpp>
+#include <esf/mesh/mesh1.hpp>
 #include <esl/dense.hpp>
 #include <esl/io.hpp>
 #include <esl/sparse.hpp>
@@ -26,14 +26,14 @@ private:
 	using Potential_view = Poisson_solver_base::Solution_view;
 
 public:
-	Schrodinger_solver(const es_fe::Mesh1& mesh, const Params& params, Potential_view phi) :
+	Schrodinger_solver(const esf::Mesh1& mesh, const Params& params, Potential_view phi) :
 		Schrodinger_solver_base(mesh, params), phi_(phi)
 	{}
 
 private:
 	double min_energy() const
 	{
-		auto max_v = phi_[es_fe::Vertex_index{0}];
+		auto max_v = phi_[esf::Vertex_index{0}];
 		for (auto& vertex : mesh().vertices())
 			max_v = std::max(max_v, phi_[*vertex]);
 
@@ -74,17 +74,17 @@ private:
 			assemble_on_edge(face);
 	}
 
-	void assemble_on_edge(const es_fe::Mesh1::Edge_view& edge)
+	void assemble_on_edge(const esf::Mesh1::Edge_view& edge)
 	{
-		using Stiff_quadr = es_fe::Quadr<2 * (Element::order - 1), 1>;
-		using Mass_quadr = es_fe::Quadr<2 * Element::order, 1>;
+		using Stiff_quadr = esf::Quadr<2 * (Element::order - 1), 1>;
+		using Mass_quadr = esf::Quadr<2 * Element::order, 1>;
 
-		const auto grads = es_fe::gradients<Element, Stiff_quadr>(es_fe::inv_jacobian(edge));
-		const auto stiffness_matrix = es_fe::stiffness_matrix<Element, Stiff_quadr>(grads, 1 / (2 * p_.m_eff));
-		const auto mass_matrix = es_fe::mass_matrix<Element, Mass_quadr>();
-		const auto potential_matrix = es_fe::mass_matrix<Element, Mass_quadr>(es_fe::at_quadr<Mass_quadr>(phi_, edge));
+		const auto grads = esf::gradients<Element, Stiff_quadr>(esf::inv_jacobian(edge));
+		const auto stiffness_matrix = esf::stiffness_matrix<Element, Stiff_quadr>(grads, 1 / (2 * p_.m_eff));
+		const auto mass_matrix = esf::mass_matrix<Element, Mass_quadr>();
+		const auto potential_matrix = esf::mass_matrix<Element, Mass_quadr>(esf::at_quadr<Mass_quadr>(phi_, edge));
 
-		const auto length = es_fe::length(edge);
+		const auto length = esf::length(edge);
 		const auto dofs = system().dof_mapper().dofs(edge);
 		for (std::size_t c = 0; c < dofs.size(); ++c)
 			if (dofs[c].is_free)

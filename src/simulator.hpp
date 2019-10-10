@@ -9,8 +9,8 @@
 #include "schrodinger_solver.hpp"
 #include "tools.hpp"
 
-#include <es_fe/geometry.hpp>
-#include <es_fe/mesh/mesh1.hpp>
+#include <esf/geometry.hpp>
+#include <esf/mesh/mesh1.hpp>
 #include <esl/dense.hpp>
 #include <esl/io.hpp>
 #include <esu/numeric.hpp>
@@ -46,7 +46,7 @@ public:
 		const auto p = read_params("input.txt");
 #endif
 
-		es_fe::Linear_grid grid;
+		esf::Linear_grid grid;
 		grid.add_tick(0);
 		grid.add_tick(p.nx - 1, p.length);
 
@@ -76,7 +76,7 @@ public:
 		///////////////////////////////////////////////////////////////////////
 		//* Quasi-classical solution */
 
-		es_fe::Mesh1 mesh(grid.grid());
+		esf::Mesh1 mesh(grid.grid());
 
 		Poisson_solver<Classical_density_predictor> cl_solver(mesh, p);
 		cl_solver.init();
