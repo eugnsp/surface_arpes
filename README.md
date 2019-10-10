@@ -11,7 +11,7 @@ or a depletion surface layer. The calculation proceeds in two steps:
    <code>&psi;<sub>n</sub>(z)</code>, followed by a convolution with normal
    distributions to account for instrumental broadening.
 
-1D finite elements ([`es_fe` library](https://github.com/eugnsp/es_fe))
+1D finite elements ([`esf` library](https://github.com/eugnsp/esf))
 are used to discretize the Poisson and the Schr&ouml;dinger equations.
 The Intel MKL library is used to solve linear systems, generalized eigenvalue
 system, compute Fourier transforms and convolution. The mathematical details
