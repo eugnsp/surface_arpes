@@ -38,7 +38,7 @@ public:
 	void run([[maybe_unused]] int argc, [[maybe_unused]] const char** argv)
 	{
 		///////////////////////////////////////////////////////////////////////
-		//* Parameters */
+		//> Parameters
 
 #ifdef NDEBUG
 		const auto p = (argc == 2) ? read_params(argv[1]) : read_params();
@@ -51,7 +51,7 @@ public:
 		grid.add_tick(p.nx - 1, p.length);
 
 		///////////////////////////////////////////////////////////////////////
-		//* The Poisson-Schrodinger solver */
+		//> The Poisson-Schrodinger solver
 
 		const auto fermi = charge_neutral_fermi_level(p);
 
@@ -74,7 +74,7 @@ public:
 				  << std::endl;
 
 		///////////////////////////////////////////////////////////////////////
-		//* Quasi-classical solution */
+		//> Quasi-classical solution
 
 		esf::Mesh1 mesh(grid.grid());
 
@@ -84,7 +84,7 @@ public:
 		cl_solver.write_mat("poisson_cl.mat");
 
 		///////////////////////////////////////////////////////////////////////
-		//* Quantum solution */
+		//> Quantum solution
 
 		Poisson_solver<Quantum_density_predictor> q_solver(mesh, p);
 		q_solver.init();
@@ -115,7 +115,7 @@ public:
 		// schrod_solver.solve();
 
 		//////////////////////////////////////////////////////////////////////
-		//* Calculation of ARPES spetrum */
+		//> Calculation of ARPES spetrum
 
 		std::cout << "----------------------------------------------\n"
 				  << "Running ARPES spectrum calculator\n"
@@ -214,7 +214,7 @@ public:
 		}
 
 		//////////////////////////////////////////////////////////////////////
-		//* Export results */
+		//> Export results
 
 		esl::Matfile_writer mat("arpes.mat");
 
