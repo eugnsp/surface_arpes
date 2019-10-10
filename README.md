@@ -139,9 +139,9 @@ The following output files are produced:
 ## External dependencies
 
 * [Intel MKL](https://software.intel.com/en-us/mkl)
-* [`esf` library](https://github.com/eugnsp/esf)
-* [`esl` library](https://github.com/eugnsp/esl)
-* [`esu` library](https://github.com/eugnsp/esu)
+* [`esf` finite elements library](https://github.com/eugnsp/esf)
+* [`esl` linear algebra library](https://github.com/eugnsp/esl)
+* [`esu` utilities library](https://github.com/eugnsp/esu)
 
 ## References
 
