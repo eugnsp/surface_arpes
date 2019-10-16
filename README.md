@@ -146,15 +146,15 @@ The following output files are produced:
 ## References
 
 1. V.N.Strocov. *Photoemission response of 2D states.*\
-[J. Electron. Spectrosc. **229**, 100 (2018)](https://doi.org/10.1016/j.elspec.2018.09.001),
-[arXiv preprint (2018)](https://arxiv.org/abs/1801.07505).
+	[J. Electron. Spectrosc. **229**, 100 (2018)](https://doi.org/10.1016/j.elspec.2018.09.001),
+	[arXiv preprint (2018)](https://arxiv.org/abs/1801.07505).
 2. S.Moser et al. *How to extract the surface potential profile
-from the ARPES signature of a 2DEG.*\
-[J. Electron. Spectrosc. **225**, 16 (2018)](https://doi.org/10.1016/j.elspec.2018.01.008).
+	from the ARPES signature of a 2DEG.*\
+	[J. Electron. Spectrosc. **225**, 16 (2018)](https://doi.org/10.1016/j.elspec.2018.01.008).
 3. A.Trellakis et al. *Iteration scheme for the solution of the
-two-dimensional Schr&ouml;dinger&ndash;Poisson equations in quantum
-structures.*\
-[J. Appl. Phys. **81**, 7880 (1997)](https://doi.org/10.1063/1.365396).
+	two-dimensional Schr&ouml;dinger&ndash;Poisson equations in quantum
+	structures.*\
+	[J. Appl. Phys. **81**, 7880 (1997)](https://doi.org/10.1063/1.365396).
 
 ## License
 

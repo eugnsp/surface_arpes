@@ -1,18 +1,3 @@
-[submodule "external/es_fe"]
-	path = external/es_fe
-	url = https://github.com/eugnsp/es_fe.git
-[submodule "external/es_la"]
-	path = external/es_la
-	url = https://github.com/eugnsp/es_la.git
-[submodule "external/es_util"]
-	path = external/es_util
-	url = https://github.com/eugnsp/es_util.git
-[submodule "external/esl"]
-	path = external/esl
-	url = https://github.com/eugnsp/esl.git
-[submodule "external/esu"]
-	path = external/esu
-	url = https://github.com/eugnsp/esu.git
-[submodule "external/esf"]
-	path = external/esf
-	url = https://github.com/eugnsp/esf.git
+[submodule "external/eslib"]
+	path = external/eslib
+	url = https://github.com/eugnsp/eslib.git
