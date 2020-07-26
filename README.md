@@ -92,7 +92,7 @@ The following output files are produced:
     * `vertices` &ndash; mesh points <code>z<sub>i</sub></code> [nm],
     * `ec` &ndash; <code>Ec(z<sub>i</sub>)</code> at mesh points [eV],
     * `f` &ndash; the Fermi level [eV],
-    * `n` &ndash; the electron density <code>n(z<sub>i+1/2</sub>)</code>
+    * `n` &ndash; the total charge density <code>n(z<sub>i+1/2</sub>)</code>
 	  at edge mid-points [eV].
 
   `poisson_cl.mat` corresponds to the solution obtained using the quasi-classical
@@ -139,9 +139,7 @@ The following output files are produced:
 ## External dependencies
 
 * [Intel MKL](https://software.intel.com/en-us/mkl)
-* [`esf` finite elements library](https://github.com/eugnsp/esf)
-* [`esl` linear algebra library](https://github.com/eugnsp/esl)
-* [`esu` utilities library](https://github.com/eugnsp/esu)
+* [`eslib` library](https://github.com/eugnsp/eslib)
 
 ## References
 
